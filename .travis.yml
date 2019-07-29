@@ -9,4 +9,4 @@ cache:
   directories:
     - node_modules
 before_install:
-  - mysql -e 'monopoly_db;'
+  - mysql -e 'DROP DATABASE IF EXISTS monopoly_db; CREATE DATABASE monopoly_db;'
