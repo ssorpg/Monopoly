@@ -2,8 +2,9 @@ language: node_js
 node_js: "8"
 services:
   - mysql
-script:
-  - "npm run eslint"
+"scripts": {
+  "lint": "eslint \"./**/*.js\""
+}
 branches:
   only:
   - master
