@@ -5,14 +5,14 @@ const app = express.Router();
 
 
 // MODELS
-const Users = require('../models/user');
+const Knex = require('../config/connection');
 
 
 
 // ROUTES
 app.get('/', async (req, res) => {
     try {
-        const resUsers = await Users('users');
+        const resUsers = await Knex('users');
 
         res.status(200).json(resUsers);
     }
