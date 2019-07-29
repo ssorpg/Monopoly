@@ -5,14 +5,14 @@ const app = express.Router();
 
 
 // MODELS
-const User = require('../models/user');
+const Knex = require('../config/connection');
 
 
 
 // ROUTES
 app.get('/api/users', async (req, res) => {
     try {
-        const resUsers = await User.findAll();
+        const resUsers = await Knex.findAll();
 
         res.status(200).json(resUsers);
     }
@@ -28,14 +28,14 @@ app.post('/api/users', async (req, res) => {
     }
 
     try {
-        const found = await User.findOne({
+        const found = await Knex.findOne({
             where: {
                 user_name: req.body.user_name
             }
         });
 
         if (found === null) {
-            await User.create(req.body);
+            await Knex.create(req.body);
         }
 
         res.status(200).end();
@@ -49,7 +49,7 @@ app.post('/api/users', async (req, res) => {
 
 app.get('/api/users/:id', async (req, res) => {
     try {
-        const resUser = await User.findOne({
+        const resUser = await Knex.findOne({
             where: {
                 id: req.params.id
             }
