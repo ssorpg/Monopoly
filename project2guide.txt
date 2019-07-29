@@ -1,0 +1,32 @@
+The Game of Monopoly - With a Twist
+
+Minimum of 2 players
+
+Players can enter their name for temporary registration.
+
+Players can start taking turns when at least 2 players have entered.
+
+On game start, a random event fires that changes the game permanently such as:
+all properties cost twice as much, dice can only roll even numbers, all players start jailed, etc
+
+Most game data will be stored in the database such as:
+player money, player location, properties information (who purchased, for how much, houses/hotels on the property etc),
+events fired/cards drawn (if some events can only fire once), etc
+
+The board itself is an array of functions that are run on users when they land on a square
+
+Properties to purchase are an array of objects stored in db that are modified when a player bids on them
+
+Perhaps properties should be joined to users to show which user owns which properties
+
+Order of completion:
+
+User connection and registration
+Put properties such as money held to users db
+Players can win/lose the game
+Board UI creation
+Players can roll and move around the board
+Random events and "when landed on" functions
+Implement jail and get out of jail logic
+Basic properties that can be directly purchased
+Properties can be bid on
