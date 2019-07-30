@@ -5,14 +5,14 @@ const app = express.Router();
 
 
 // MODELS
-const Knex = require('../config/connection');
+const knex = require('../config/connection');
 
 
 
 // ROUTES
 app.get('/api/users', async (req, res) => {
     try {
-        const resUsers = await Knex.findAll();
+        const resUsers = await knex('users');
 
         res.status(200).json(resUsers);
     }
@@ -23,19 +23,27 @@ app.get('/api/users', async (req, res) => {
 });
 
 app.post('/api/users', async (req, res) => {
-    if (req.body.user_name.length < 1 || req.body.user_name.length > 20) {
+    if (req.body.username.length < 1 || req.body.username.length > 20) {
         return res.status(400).send('Please enter a username between 1 and 20 characters');
     }
 
     try {
-        const found = await Knex.findOne({
-            where: {
-                user_name: req.body.user_name
-            }
-        });
+        const found = await knex.from('users').select('id').where('username', '=', req.body.username)
+            .catch(err => {
+                throw err;
+            })
+            .finally(() => {
+                knex.destroy();
+            });
 
         if (found === null) {
-            await Knex.create(req.body);
+            await knex('users').insert(req.body)
+                .catch(err => {
+                    throw err;
+                })
+                .finally(() => {
+                    knex.destroy();
+                });
         }
 
         res.status(200).end();
@@ -49,11 +57,13 @@ app.post('/api/users', async (req, res) => {
 
 app.get('/api/users/:id', async (req, res) => {
     try {
-        const resUser = await Knex.findOne({
-            where: {
-                id: req.params.id
-            }
-        });
+        const resUser = await knex.from('users').select('*').where('id', '=', req.params.id)
+            .catch(err => {
+                throw err;
+            })
+            .finally(() => {
+                knex.destroy();
+            });
 
         res.status(200).json(resUser);
     }
