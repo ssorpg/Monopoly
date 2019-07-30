@@ -3,6 +3,8 @@ exports.up = function (knex) {
         table.increments('id').primary();
         table.integer('money');
         table.string('user_name');
+        table.integer('game_id').unsigned()
+            .references('game_state.id');
     });
 };
 
