@@ -28,22 +28,10 @@ app.post('/api/users', async (req, res) => {
     }
 
     try {
-        const found = await knex.from('users').select('id').where('username', '=', req.body.username)
-            .catch(err => {
-                throw err;
-            })
-            .finally(() => {
-                knex.destroy();
-            });
+        const found = await knex.from('users').select('id').where('username', '=', req.body.username);
 
         if (found === null) {
-            await knex('users').insert(req.body)
-                .catch(err => {
-                    throw err;
-                })
-                .finally(() => {
-                    knex.destroy();
-                });
+            await knex('users').insert(req.body);
         }
 
         res.status(200).end();
@@ -57,13 +45,19 @@ app.post('/api/users', async (req, res) => {
 
 app.get('/api/users/:id', async (req, res) => {
     try {
-        const resUser = await knex.from('users').select('*').where('id', '=', req.params.id)
-            .catch(err => {
-                throw err;
-            })
-            .finally(() => {
-                knex.destroy();
-            });
+        const resUser = await knex.from('users').select('*').where('id', '=', req.params.id);
+
+        res.status(200).json(resUser);
+    }
+    catch (err) {
+        res.status(500).end();
+        throw err;
+    }
+});
+
+app.put('/api/users/:id', async (req, res) => {
+    try {
+        const resUser = await knex('users').where('id', '=', req.body.id).update(req.body).returning();
 
         res.status(200).json(resUser);
     }
