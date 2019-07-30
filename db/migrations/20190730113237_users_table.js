@@ -5,6 +5,7 @@ exports.up = function (knex) {
         table.string('user_name');
         table.integer('game_id').unsigned()
             .references('game_state.id');
+        table.integer('position');
     });
 };
 

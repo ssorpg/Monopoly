@@ -1,6 +1,6 @@
 // EXPRESS
 const express = require('express');
-const app = express.Router();
+const ws = new WebSocket('ws://www.host.com/path');
 
 
 

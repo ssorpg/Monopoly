@@ -1,7 +1,7 @@
 /* body */
-body {
+/* body {
   overflow: hidden;
-}
+} */
 
 /* game frame */
 #gameFrame {
@@ -110,4 +110,29 @@ body {
   margin-right: auto;
   bottom: 400px;
   border: solid black 1px;
+}
+
+/* Player colors */
+.player1 {
+  background-color: rgb(77, 166, 255);
+  width: 10px;
+  height: 10px;
+}
+
+.player2 {
+  background-color: rgb(255, 77, 106);
+  width: 10px;
+  height: 10px;
+}
+
+.player3 {
+  background-color: rgb(77, 255, 77);
+  width: 10px;
+  height: 10px;
+}
+
+.player4 {
+  background-color: rgb(255, 166, 77);
+  width: 10px;
+  height: 10px;
 }
