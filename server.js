@@ -17,9 +17,11 @@ app.use(express.static('public'));
 // ROUTES
 const htmlRoutes = require('./routes/htmlRoutes');
 const userRoutes = require('./routes/userRoutes');
+const gameRoutes = require('./routes/gameRoutes');
 
 app.use(htmlRoutes);
 app.use(userRoutes);
+app.use(gameRoutes);
 
 
 
