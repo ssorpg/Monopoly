@@ -1,3 +1,58 @@
-.list-group-item {
-  line-height: 2.5;
+/* game frame */
+#gameFrame {
+  width: 800px;
+  height: 600px;
+  border: solid black 2px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
+}
+
+/* board cells */
+.cell {
+	position: relative;
+	top: 0px;
+	left: 0px;
+	padding: 0px;
+	vertical-align: bottom;
+	background-repeat: no-repeat;
+	background-size: auto 40px;
+}
+
+.board-center {
+	width: 675px;
+	border: none;
+	vertical-align: bottom;
+	background-repeat: no-repeat;
+	background-size: auto 40px;
+}
+
+.board-corner {
+	width: 100px;
+  height: 100px;
+  border: solid black 1px;
+}
+
+.board-top {
+	width: 120px;
+  height: auto;
+  border: solid black 1px;
+}
+
+.board-bottom {
+	width: 120px;
+  height: auto;
+  border: solid black 1px;
+}
+
+.board-left {
+	width: 100px;
+  height: 77px;
+  border: solid black 1px;
+}
+
+.board-right {
+	width: 100px;
+  height: 77px;
+  border: solid black 1px;
 }
