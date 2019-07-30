@@ -1,5 +1,5 @@
 // REQUIRES
-const config = require('./config');
+const config = require('../knexfile');
 const knex = require('knex')(config);
 
 

@@ -1,3 +1,8 @@
+// DOTENV FOR KNEX
+require('dotenv').config();
+
+
+
 // SEQUELIZE CONFIGS
 const configs = {
     development: {
@@ -8,8 +13,11 @@ const configs = {
             password: process.env.MYSQL_PASS,
             database: 'monopoly_db'
         },
+        migrations: {
+            directory: __dirname + '/db/migrations'
+        },
         seeds: {
-            directory: './seeds'
+            directory: __dirname + '/db/seeds'
         }
     },
     test: {
@@ -19,11 +27,23 @@ const configs = {
             user: process.env.MYSQL_USER,
             password: process.env.MYSQL_PASS,
             database: 'monopolytest_db'
+        },
+        migrations: {
+            directory: __dirname + '/db/migrations'
+        },
+        seeds: {
+            directory: __dirname + '/db/seeds'
         }
     },
     production: {
         client: 'pg',
-        connection: process.env.DATABASE_URL
+        connection: process.env.DATABASE_URL,
+        migrations: {
+            directory: __dirname + '/db/migrations'
+        },
+        seeds: {
+            directory: __dirname + '/db/seeds'
+        }
     }
 };
 
