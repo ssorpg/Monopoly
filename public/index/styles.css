@@ -1,6 +1,18 @@
 /* body */
 body {
   overflow: hidden;
+  font-family: 'Fredericka the Great', cursive;
+  color:burlywood;
+  background-image: url("../../images/background-2.jpg");
+}
+/*refresh*/
+#refresh{
+  display: flex;
+}
+/*playerinput*/
+#player1input{
+  display: inline;
+  float: left;
 }
 
 /* game frame */
