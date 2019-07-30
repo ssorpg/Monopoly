@@ -1,5 +1,9 @@
 language: node_js
 node_js: "8"
+script:
+  - "npm run lint -- --fix"
+services:
+  - mysql
 branches:
   only:
   - master
@@ -7,4 +11,4 @@ cache:
   directories:
     - node_modules
 before_install:
-  - mysql -e 'CREATE DATABASE testdb;'
+  - mysql -e 'CREATE DATABASE monopoly_db;'
