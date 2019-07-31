@@ -1,11 +1,10 @@
 // REQUESTS
-async function getPlayers() {
-    const game_id = $('#board').data('id');
-    const players = await $.get('../api/game_state/' + game_id + '/users');
+async function getPlayers(ws) {
+    const players = await ws.send('getUsers');
 
     $('.cell').empty();
     $('#players').empty();
-    
+
     let playerNum = 1;
     players.forEach(player => {
         player.playerNum = playerNum;
@@ -38,11 +37,11 @@ function setPlayerPosition(player) {
 
 function setRoll(roll) {
     const imgNames = []
-    let imgPath = '../images/';
+    let imgPath = '/images/';
 
     let rollP = $('<p>')
         .append('You rolled ' + roll);
-    
+
     console.log(roll);
 
     $('#dice').append(rollP);
@@ -51,10 +50,10 @@ function setRoll(roll) {
 
 
 // EVENT LISTENERS
-async function setUpEventListeners() {
-    $('.rollDice').on('click', () => {
-        const roll = $.get('../api/game/rollDice');
-        
+function setUpEventListeners(ws) {
+    $('.rollDice').on('click', async () => {
+        const roll = await ws.send('rollDice');
+
         setRoll(roll);
     });
 }
@@ -62,9 +61,17 @@ async function setUpEventListeners() {
 
 
 // ON LOAD
-$(document).ready(function () {
-    setUpEventListeners();
-    getPlayers();
+$(document).ready(() => {
+    const game_id = $('#board').data('id');
+    const ws = new WebSocket("ws://localhost:8080/");
+
+    console.log(ws);
+
+    ws.onopen = () => {
+        getPlayers(ws);
+    };
+
+    setUpEventListeners(ws);
 });
 
 

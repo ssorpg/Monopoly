@@ -1,4 +1,5 @@
 <html>
+
 <head>
     <title>Monopoly</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
@@ -11,8 +12,8 @@
 
 <body>
     <div id="refresh">
-       <h1>Refresh this page to start a new game.</h1> 
-       <img id="refreshIcon" src="/public/images/refresh-icon.png"/>
+        <h1>Refresh this page to start a new game.</h1>
+        <img id="refreshIcon" src="/public/images/refresh-icon.png" />
     </div>
     <div id="moneybarwrap">
         <div id="moneybar">
@@ -149,11 +150,10 @@
                             <option selected="selected" style="color: yellow;">Yellow</option>
                         </select>
                         <div style="margin: 20px 0px;">
-                            <input type="button" src="/public/images/start-icon.png" value="Start Game" id="submitGameButton" title="Begin playing." />
+                            <input type="button" src="/public/images/start-icon.png" value="Start Game"
+                                id="submitGameButton" title="Begin playing." onclick="location.href='/public/game/game.html'" />
                             <img src="/public/images/start-icon.png" id="start-icon" class="start-icon" alt=submit>
                         </div>
+</body>
 
-
-
-                    </body>
 </html>

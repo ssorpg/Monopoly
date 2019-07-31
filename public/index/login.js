@@ -34,7 +34,6 @@ $(function() {
             }
         }).then(function() {
             console.log("player data sent");
-            window.open("/public/game/game.html");
         })
     })
 })
