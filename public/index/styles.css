@@ -3,7 +3,8 @@ body {
   overflow: hidden;
   font-family: 'Fredericka the Great', cursive;
   color:burlywood;
-  background-image: url("../../images/background-2.jpg");
+  background-image: url("/public/images/background-2.jpg");
+  cursor: url(http://www.rw-designer.com/cursor-extern.php?id=85612);
 }
 /*refresh*/
 #refresh{
@@ -12,4 +13,45 @@ body {
 /*playerinput*/
 #player1input{
   display: inline;
+  position: relative;
+}
+
+#player2input{
+  display: inline;
+  position: relative;
+}
+
+#player3input{
+  display: inline;
+  position: relative;
+}
+
+#player4input{
+  display: inline;
+  position: relative;
+}
+
+/* Player colors */
+.player1 {
+  background-color: rgb(77, 166, 255);
+  width: 50px;
+  height: 50px;
+}
+
+.player2 {
+  background-color: rgb(255, 77, 106);
+  width: 50px;
+  height: 50px;
+}
+
+.player3 {
+  background-color: rgb(77, 255, 77);
+  width: 50px;
+  height: 50px;
+}
+
+.player4 {
+  background-color: rgb(255, 166, 77);
+  width: 50px;
+  height: 50px;
 }
