@@ -1,11 +1,16 @@
-// REQUESTS
-async function getPlayers() {
-    const game_id = $('#board').data('id');
-    const players = await $.get('../api/game_state/' + game_id + '/users');
+// FUNCTION ROUTER OBJECT
+const callbacks = {
+    setPlayers: setPlayers,
+    setRoll: setRoll
+};
 
+
+
+// FUNCTIONS
+function setPlayers(players) {
     $('.cell').empty();
     $('#players').empty();
-    
+
     let playerNum = 1;
     players.forEach(player => {
         player.playerNum = playerNum;
@@ -17,9 +22,6 @@ async function getPlayers() {
     });
 }
 
-
-
-// FUNCTIONS
 function setPlayerInfo(player) {
     let playerP = $('<p>')
         .append('<h3>Player ' + player.playerNum + '</h3>')
@@ -37,29 +39,46 @@ function setPlayerPosition(player) {
 }
 
 function setRoll(roll) {
-    let rollP = $('<p>')
-        .append('You rolled ' + roll);
+    const imgNames = ['1oneDice.png', '2twoDice.png', '3threeDice.png', '4fourDice.png', '5fiveDice.png', '6sixDice.png'];
+    const imgPath = '../images/';
 
-    $('#dice').append(rollP);
+    $('.diceImages').empty();
+
+    const newImg = $('<img>').attr('src', imgPath + imgNames[roll.die1 - 1]);
+    const newImg2 = $('<img>').attr('src', imgPath + imgNames[roll.die2 - 1]);
+
+    $('.diceImages').append(newImg, newImg2);
 }
 
 
 
 // EVENT LISTENERS
-async function setUpEventListeners() {
-    $('.rollDice').on('click', () => {
-        const roll = $.get('../api/game_state/roll');
-        
-        setRoll(roll);
+function setUpEventListeners(ws) {
+    $('.rollDice').on('click', async () => {
+        ws.send('rollDice');
     });
 }
 
 
 
 // ON LOAD
-$(document).ready(function () {
-    setUpEventListeners();
-    getPlayers();
+$(document).ready(() => {
+    const game_id = $('#board').data('id');
+    const ws = new WebSocket("ws://localhost:8080/");
+
+    console.log(ws);
+
+    ws.onopen = () => {
+        ws.send('getUsers');
+    };
+
+    ws.onmessage = (message) => {
+        console.log(message);
+        const data = JSON.parse(message.data);
+        callbacks[data.function](data.payload);
+    }
+
+    setUpEventListeners(ws);
 });
 
 
