@@ -21,10 +21,18 @@ async function rollDice() {
 
     rval.die1 = Math.floor((Math.random() * 6) + 1);
     rval.die2 = Math.floor((Math.random() * 6) + 1);
+    var dieSum = rval.die1 + rval.die2
+    
+    var user = await knex('users').select('*').where('id', '=', 'id')
+    if (user.position + dieSum > 24){
+        var newPosition = user.position + dieSum -24;
+    } else {
+        var newPosition = user.position + dieSum;
+    }
 
     return {
         function: 'setRoll',
-        payload: rval
+        payload: newPosition
     };
 }
 
