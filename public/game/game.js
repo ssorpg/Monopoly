@@ -25,7 +25,7 @@ function setPlayers(players) {
 function setPlayerInfo(player) {
     let playerP = $('<p>')
         .append('<h3>Player ' + player.playerNum + '</h3>')
-        .append('<h4>Name: ' + player.user_name + '</h4>')
+        .append('<h4>Name: ' + player.name + '</h4>')
         .append('<h4>Money: ' + player.money + '</h3>');
 
     $('#players').append(playerP);
@@ -63,18 +63,15 @@ function setUpEventListeners(ws) {
 
 // ON LOAD
 $(document).ready(() => {
-    const game_id = $('#board').data('id');
-    const ws = new WebSocket("ws://localhost:8080/");
+    const ws = new WebSocket('ws://localhost:8080/');
 
     console.log(ws);
 
-    ws.onopen = () => {
-        ws.send('getUsers');
-    };
-
     ws.onmessage = (message) => {
         console.log(message);
+
         const data = JSON.parse(message.data);
+
         callbacks[data.function](data.payload);
     }
 

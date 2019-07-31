@@ -4,21 +4,6 @@ const knex = require('../config/connection');
 
 
 // FUNCTIONS
-async function newPlayer(ws, params) {
-    const numPlayers = await knex('players').select('*').count('id');
-
-    if (numPlayers > 3) {
-        ws.close();
-    }
-    else {
-        await knex('players').insert(params.name);
-        const newPlayerID = await knex('players').select('id').orderBy('id').limit(1);
-
-        ws.playerNum = numPlayers + 1;
-        ws.userID = newPlayerID;
-    }
-}
-
 async function getPlayers() {
     const users = await knex('players').select('*');
 
@@ -53,7 +38,6 @@ async function deletePlayer(player_id) {
 
 // EXPORTS
 module.exports = {
-    newPlayer: newPlayer,
     getPlayers: getPlayers,
     rollDice: rollDice,
     deletePlayer: deletePlayer
