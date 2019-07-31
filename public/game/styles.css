@@ -53,9 +53,9 @@
 }
 
 .cell-board-corner {
-	width: 100px;
-  height: 100px;
-  border: dashed black 1px;
+	width: 120px;
+  height: 120px;
+  border: solid black 1px;
 }
 
 .cell-board-top {
@@ -71,15 +71,15 @@
 }
 
 .cell-board-left {
-	width: 100px;
-  height: 77px;
-  border: dashed black 1px;
+	width: auto;
+  height: 120px;
+  border: solid black 1px;
 }
 
 .cell-board-right {
-	width: 100px;
-  height: 77px;
-  border: dashed black 1px;
+  width: auto;
+  height: 120px;
+  border: solid black 1px;
 }
 
 /* score board */
