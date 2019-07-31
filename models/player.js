@@ -28,7 +28,7 @@ async function getPlayers() {
     };
 }
 
-async function rollDice(player_id) {
+async function rollDice() {
     var rval = {
         die1: 0,
         die2: 0
