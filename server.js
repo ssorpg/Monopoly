@@ -1,6 +1,7 @@
 // REQUIRES
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -10,7 +11,9 @@ const PORT = process.env.PORT || 8080;
 // MIDDLEWARE
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(express.static('public'));
+// app.use(express.static('public'));
+// Serve static content for the app from the "public" directory in the application directory.
+app.use("/public", express.static(path.join(__dirname, "/public")));
 
 
 
