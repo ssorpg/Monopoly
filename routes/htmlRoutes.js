@@ -12,9 +12,7 @@ const path = require('path');
 // ROUTES
 app.get('/', async (req, res) => {
     try {
-        // const resUsers = await Knex('users');
-
-        // res.status(200).json(resUsers);
+        // TODO(?): Do we need to clear all the tables when "/" is requested?
         res.sendFile(path.join(__dirname + "/../public/index/login.html"));
     }
     catch (err) {

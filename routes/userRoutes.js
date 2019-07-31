@@ -1,6 +1,7 @@
 // EXPRESS
 const express = require('express');
 const app = express.Router();
+const path = require("path");
 
 
 
@@ -23,18 +24,22 @@ app.get('/api/users', async (req, res) => {
 });
 
 app.post('/api/users', async (req, res) => {
-    if (req.body.username.length < 1 || req.body.username.length > 20) {
-        return res.status(400).send('Please enter a username between 1 and 20 characters');
-    }
-
     try {
-        const found = await knex.from('users').select('id').where('username', '=', req.body.username);
-
-        if (found === null) {
-            await knex('users').insert(req.body);
+        users = req.body["players[]"];
+        console.log(users);
+        for (let i = 0; i < users.length; i++) {
+            const found = await knex.from('users').select('id').where('user_name', '=', users[i]);
+            if (found.length === 0) {
+                await knex('users').insert({
+                    money : 10000,
+                    user_name : users[i],
+                    game_id : 1,
+                    position : 18
+                });
+            }
         }
 
-        res.status(200).end();
+        res.sendFile(path.join(__dirname + "/../public/game/game.html"));
     }
     catch (err) {
         res.status(500).end();

@@ -5,18 +5,14 @@
     <link href="https://fonts.googleapis.com/css?family=Fredericka+the+Great&display=swap" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <!----<script type="text/javascript" src="classicedition.js"></script>----->
-    <!-- <script type="text/javascript" src="newyorkcityedition.js"></script> -->
-    <!------<script type="text/javascript" src="ai.js"></script>---->
-    <!-------<script type="text/javascript" src="monopoly.js"></script>---->
     <link rel="stylesheet" type="text/css" href="/public/index/styles.css" />
+    <script src="/public/index/login.js"></script>
 </head>
 
 <body>
     <div id="refresh">
        <h1>Refresh this page to start a new game.</h1> 
        <img id="refreshIcon" src="/public/images/refresh-icon.png"/>
-       <!-----<img src="../../images/refresh-icon.png" id="refresh" class="refresh" alt=refresh>--->
     </div>
     <div id="moneybarwrap">
         <div id="moneybar">
@@ -91,7 +87,7 @@
             <div id="player2input" class="player-input">
                 <img src="/public/images/player2.png" id="player2" width=50 height=50 class="player2" alt=player2>
                 Player 2: <input type="text" id="player2name" title="Player name" maxlength="4" value="Player 2" />
-                <select id="player1color" title="Player color">
+                <select id="player2color" title="Player color">
                     <option style="color: aqua;">Aqua</option>
                     <option style="color: black;">Black</option>
                     <option style="color: blue;">Blue</option>
@@ -112,7 +108,7 @@
                 <div id="player3input" class="player-input">
                     <img src="/public/images/player3.png" id="player3" class="player3" alt=player3>
                     Player 3: <input type="text" id="player3name" title="Player name" maxlength="4" value="Player 3" />
-                    <select id="player1color" title="Player color">
+                    <select id="player3color" title="Player color">
                         <option style="color: aqua;">Aqua</option>
                         <option style="color: black;">Black</option>
                         <option style="color: blue;">Blue</option>
@@ -134,7 +130,7 @@
                         <img src="/public/images/player4.png" id="player4" class="player4" alt=player4>
                         Player 4: <input type="text" id="player4name" title="Player name" maxlength="4"
                             value="Player 4" />
-                        <select id="player1color" title="Player color">
+                        <select id="player4color" title="Player color">
                             <option style="color: aqua;">Aqua</option>
                             <option style="color: black;">Black</option>
                             <option style="color: blue;">Blue</option>
@@ -153,10 +149,8 @@
                             <option selected="selected" style="color: yellow;">Yellow</option>
                         </select>
                         <div style="margin: 20px 0px;">
-                            <input type="button" src="/public/images/start-icon.png" value="Start Game" onclick="setup();"
-                                title="Begin playing." />
-                            <img src="/public/images/start-icon.png" id="start-icon" class="start-icon" onclick="setup()"
-                                alt=submit>
+                            <input type="button" src="/public/images/start-icon.png" value="Start Game" id="submitGameButton" title="Begin playing." />
+                            <img src="/public/images/start-icon.png" id="start-icon" class="start-icon" alt=submit>
                         </div>
 
 
