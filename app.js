@@ -19,7 +19,7 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 // ROUTES
 require('./routes/html/http')(app);
 require('./routes/user/http')(app);
-require('./routes/game/http')(app);
+// require('./routes/game/http')(app);
 
 
 
