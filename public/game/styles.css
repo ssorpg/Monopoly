@@ -101,6 +101,10 @@
   border: solid lightcoral 3px;
 }
 
+.diceImages > img {
+  width: 20px;
+}
+
 /* players */
 #players {
   position: absolute;
