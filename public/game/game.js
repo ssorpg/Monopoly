@@ -1,4 +1,4 @@
-// FUNCTION ROUTER OBJECT
+// ROUTER OBJECT
 const callbacks = {
     setPlayers: setPlayers,
     setRoll: setRoll

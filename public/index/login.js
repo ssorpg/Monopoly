@@ -1,47 +1,23 @@
-$(function() {
-    $("#submitGameButton").on("click", function() {
+$(function () {
+    $("#submitGameButton").on("click", function () {
         // put player setup in the local storage
-        let playerSetup = window.localStorage;
+        const playerSetup = window.localStorage;
 
-        // get player number
-        let playerNum = parseInt($("#playernumber").val());
-        playerSetup.setItem("playerNum", String(playerNum));
+        let player = {
+            name: $('#playerName').val(),
+            money: 1500,
+            position: 18
+        };
 
-        // create player array
-        let playerArr = new Array();
+        // use user api to send player names as players
+        $.post('/api/players', {
+            data: player
+        }).then(res => {
+            console.log(res);
 
-        // fetch player name and color choices
-        for (let i = 0; i < playerNum; i++) {
-            let playerNameId = getPlayerNameByNum(i+1);
-            let playerColorId = getPlayerColorByNum(i+1);
-
-            let playerName = $("#" + playerNameId).val();
-            let playerColor = $("#" + playerColorId).val();
-
-            playerArr.push(playerName);
-
-            playerSetup.setItem(playerNameId, playerName);
-            playerSetup.setItem(playerColorId, playerColor);
-        }
-
-        console.log(playerArr);
-
-        // use user api to send player names as users
-        $.ajax('/api/users', {
-            type : "POST",
-            data : {
-                players : playerArr
+            if (res.status === 200) {
+                window.location.href = 'http://localhost:8080/public/game/game.html';
             }
-        }).then(function() {
-            console.log("player data sent");
         })
     })
 })
-
-function getPlayerNameByNum(num) {
-    return "player" + num + "name";
-}
-
-function getPlayerColorByNum(num) {
-    return "player" + num + "color";
-}
