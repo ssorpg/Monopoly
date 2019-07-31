@@ -87,6 +87,10 @@
   border: solid black 1px;
 }
 
+.diceImages > img {
+  width: 20px;
+}
+
 /* players */
 #players {
   position: absolute;

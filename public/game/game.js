@@ -1,7 +1,13 @@
-// REQUESTS
-async function getPlayers(ws) {
-    const players = await ws.send('getUsers');
+// FUNCTION ROUTER OBJECT
+const callbacks = {
+    setPlayers: setPlayers,
+    setRoll: setRoll
+};
 
+
+
+// FUNCTIONS
+function setPlayers(players) {
     $('.cell').empty();
     $('#players').empty();
 
@@ -16,9 +22,6 @@ async function getPlayers(ws) {
     });
 }
 
-
-
-// FUNCTIONS
 function setPlayerInfo(player) {
     let playerP = $('<p>')
         .append('<h3>Player ' + player.playerNum + '</h3>')
@@ -36,15 +39,15 @@ function setPlayerPosition(player) {
 }
 
 function setRoll(roll) {
-    const imgNames = []
-    let imgPath = '/images/';
+    const imgNames = ['1oneDice.png', '2twoDice.png', '3threeDice.png', '4fourDice.png', '5fiveDice.png', '6sixDice.png'];
+    const imgPath = '../images/';
 
-    let rollP = $('<p>')
-        .append('You rolled ' + roll);
+    $('.diceImages').empty();
 
-    console.log(roll);
+    const newImg = $('<img>').attr('src', imgPath + imgNames[roll.die1 - 1]);
+    const newImg2 = $('<img>').attr('src', imgPath + imgNames[roll.die2 - 1]);
 
-    $('#dice').append(rollP);
+    $('.diceImages').append(newImg, newImg2);
 }
 
 
@@ -52,9 +55,7 @@ function setRoll(roll) {
 // EVENT LISTENERS
 function setUpEventListeners(ws) {
     $('.rollDice').on('click', async () => {
-        const roll = await ws.send('rollDice');
-
-        setRoll(roll);
+        ws.send('rollDice');
     });
 }
 
@@ -68,8 +69,14 @@ $(document).ready(() => {
     console.log(ws);
 
     ws.onopen = () => {
-        getPlayers(ws);
+        ws.send('getUsers');
     };
+
+    ws.onmessage = (message) => {
+        console.log(message);
+        const data = JSON.parse(message.data);
+        callbacks[data.function](data.payload);
+    }
 
     setUpEventListeners(ws);
 });
