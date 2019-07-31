@@ -27,7 +27,7 @@ async function rollDice() {
     if (user.position + dieSum > 24){
         var newPosition = user.position + dieSum -24;
     } else {
-        var newPosition = user.position + dieSum;
+        //   var newPosition = user.position + dieSum;
     }
 
     return {
