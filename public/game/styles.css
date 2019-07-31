@@ -38,33 +38,33 @@
 	background-size: auto 40px;
 }
 
-.board-corner {
-	width: 100px;
-  height: 100px;
+.cell-board-corner {
+	width: 120px;
+  height: 120px;
   border: solid black 1px;
 }
 
-.board-top {
+.cell-board-top {
 	width: 120px;
   height: auto;
   border: solid black 1px;
 }
 
-.board-bottom {
+.cell-board-bottom {
 	width: 120px;
   height: auto;
   border: solid black 1px;
 }
 
-.board-left {
-	width: 100px;
-  height: 77px;
+.cell-board-left {
+	width: auto;
+  height: 120px;
   border: solid black 1px;
 }
 
-.board-right {
-	width: 100px;
-  height: 77px;
+.cell-board-right {
+  width: auto;
+  height: 120px;
   border: solid black 1px;
 }
 
