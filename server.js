@@ -28,9 +28,7 @@ app.use(gameRoutes);
 //LISTEN
 app.listen(PORT, function () {
     console.log(
-        '==> 🌎  Listening on port %s. Visit http://localhost:%s/ in your browser.',
-        PORT,
-        PORT
+        '==> 🌎  Listening on port ' + PORT + '. Visit http://localhost:' + PORT + '/ in your browser.'
     );
 });
 
