@@ -37,8 +37,13 @@ function setPlayerPosition(player) {
 }
 
 function setRoll(roll) {
+    const imgNames = []
+    let imgPath = '../images/';
+
     let rollP = $('<p>')
         .append('You rolled ' + roll);
+    
+    console.log(roll);
 
     $('#dice').append(rollP);
 }
@@ -48,7 +53,7 @@ function setRoll(roll) {
 // EVENT LISTENERS
 async function setUpEventListeners() {
     $('.rollDice').on('click', () => {
-        const roll = $.get('../api/game_state/roll');
+        const roll = $.get('../api/game/rollDice');
         
         setRoll(roll);
     });

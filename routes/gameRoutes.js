@@ -22,7 +22,7 @@ app.get('/api/game_state/:id/users', async (req, res) => {
     }
 });
 
-app.get('/api/rollDice', function (req, res) {
+app.get('/api/game/rollDice', function (req, res) {
     var rval = {
         die1: 0,
         die2: 0
