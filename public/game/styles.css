@@ -1,9 +1,23 @@
+/* body */
+ body {
+  overflow: hidden;
+  font-family: 'Fredericka the Great', cursive;
+  color:burlywood;
+  background-image: url("../images/background-2.jpg");
+}
+
+/*playerinput*/
+#player1input{
+  display: inline;
+  float: left;
+}
+
 /* game frame */
 #gameFrame {
   position: relative;
   width: 1440px;
   height: 800px;
-  border: solid black 2px;
+  border: dashed lightskyblue 10px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 30px;
@@ -13,7 +27,7 @@
   position: relative;
   width: 800px;
   height: 600px;
-  border: solid black 2px;
+  border: dashed lightskyblue 5px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 30px;
@@ -47,13 +61,13 @@
 .cell-board-top {
 	width: 120px;
   height: auto;
-  border: solid black 1px;
+  border: dashed black 1px;
 }
 
 .cell-board-bottom {
 	width: 120px;
   height: auto;
-  border: solid black 1px;
+  border: dashed black 1px;
 }
 
 .cell-board-left {
@@ -75,7 +89,7 @@
   left: 50px;
   width: 100px;
   height: 300px;
-  border: solid black 1px;
+  border: dashed lightskyblue 4px;
 }
 
 /* dice */
@@ -84,7 +98,7 @@
   width: 100px;
   height: 100px;
   left: 50px;
-  border: solid black 1px;
+  border: solid lightcoral 3px;
 }
 
 .diceImages > img {
@@ -98,7 +112,7 @@
   height: 500px;
   margin-left: 1200px;
   bottom: 250px;
-  border: solid black 1px;
+  border: dashed lightskyblue 4px;
 }
 
 #control {
@@ -108,7 +122,7 @@
   margin-left: auto;  
   margin-right: auto;
   bottom: 400px;
-  border: solid black 1px;
+  border: dashed lightskyblue 4px;
 }
 
 /* Player colors */
@@ -134,4 +148,16 @@
   background-color: rgb(255, 166, 77);
   width: 10px;
   height: 10px;
+}
+.cell-board-corner{
+background-color: bisque;
+}
+#cell1,#cell23,#cell7,#cell5,#cell11,#cell13,#cell13,#cell17,#cell19{
+  background-color:lightgreen;
+}
+#cell2,#cell4,#cell20,#cell22,#cell14,#cell16,#cell10,#cell8{
+  background-color: coral;
+}
+#cell15,#cell21,#cell3,#cell9{
+  background-color: palevioletred
 }
