@@ -9,32 +9,13 @@
     <!-- <script type="text/javascript" src="newyorkcityedition.js"></script> -->
     <!------<script type="text/javascript" src="ai.js"></script>---->
     <!-------<script type="text/javascript" src="monopoly.js"></script>---->
-    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="/public/index/styles.css" />
 </head>
 
 <body>
-   <!----- <div id="popupbackground"></div>
-    <div id="popupwrap">
-        <div id="popup">
-            <div style="position: relative;">
-                <div id="popuptext"></div>
-                <div id="popupdrag"></div>
-            </div>
-        </div>
-    </div>
-    <div id="statsbackground"></div>
-    <---<div id="statswrap">
-        <div id="stats">
-            <div style="position: relative;">
-                <img id="statsclose" src="../../images/close-icon.png" title="Close" alt="x" />
-                <div id="statstext"></div>
-                <div id="statsdrag"></div>
-            </div>
-        </div>
-    </div>---->
     <div id="refresh">
        <h1>Refresh this page to start a new game.</h1> 
-       <input type="image" src="../../images/refresh-icon.png"/>
+       <img id="refreshIcon" src="/public/images/refresh-icon.png"/>
        <!-----<img src="../../images/refresh-icon.png" id="refresh" class="refresh" alt=refresh>--->
     </div>
     <div id="moneybarwrap">
@@ -42,7 +23,7 @@
             <table>
                 <tr id="moneybarrow0" class="money-bar-row">
 
-                    <td class="moneybararrowcell"><img src="../../images/arrow-icon.png" id="p0arrow"
+                    <td class="moneybararrowcell"><img src="/public/images/arrow-icon.png" id="p0arrow"
                             class="money-bar-arrow" alt=">" /></td>
                     <td id="p0moneybar" class="moneybarcell">
                         <div><span id="p0moneyname">Player 1</span>:</div>
@@ -50,7 +31,7 @@
                     </td>
                 </tr>
                 <tr id="moneybarrow1" class="money-bar-row">
-                    <td class="moneybararrowcell"><img src="../../images/arrow-icon.png" id="p1arrow"
+                    <td class="moneybararrowcell"><img src="/public/images/arrow-icon.png" id="p1arrow"
                             class="money-bar-arrow" alt=">" /></td>
                     <td id="p1moneybar" class="moneybarcell">
                         <div><span id="p1moneyname">Player 2</span>:</div>
@@ -58,7 +39,7 @@
                     </td>
                 </tr>
                 <tr id="moneybarrow2" class="money-bar-row">
-                    <td class="moneybararrowcell"><img src="../../images/arrow-icon.png" id="p2arrow"
+                    <td class="moneybararrowcell"><img src="/public/images/arrow-icon.png" id="p2arrow"
                             class="money-bar-arrow" alt=">" /></td>
                     <td id="p2moneybar" class="moneybarcell">
                         <div><span id="p2moneyname">Player 3</span>:</div>
@@ -66,7 +47,7 @@
                     </td>
                 </tr>
                 <tr id="moneybarrow3" class="money-bar-row">
-                    <td class="moneybararrowcell"><img src="../../images/arrow-icon.png" id="p3arrow"
+                    <td class="moneybararrowcell"><img src="/public/images/arrow-icon.png" id="p3arrow"
                             class="money-bar-arrow" alt=">" /></td>
                     <td id="p3moneybar" class="moneybarcell">
                         <div><span id="p3moneyname">Player 4</span>:</div>
@@ -87,7 +68,7 @@
             </select>
         </div>
         <div id="player1input" class="player-input">
-            <img src="../../images/player1.png" width="50" height="50" id="player1" class="player1" alt=player1>
+            <img src="/public/images/player1.png" width="50" height="50" id="player1" class="player1" alt=player1>
             Player 1: <input type="text" id="player1name" title="Player name" maxlength="4" value="Player 1" />
             <select id="player1color" title="Player color">
                 <option style="color: aqua;">Aqua</option>
@@ -108,7 +89,7 @@
                 <option selected="selected" style="color: yellow;">Yellow</option>
             </select>
             <div id="player2input" class="player-input">
-                <img src="../../images/player2.png" id="player2" width=50 height=50 class="player2" alt=player2>
+                <img src="/public/images/player2.png" id="player2" width=50 height=50 class="player2" alt=player2>
                 Player 2: <input type="text" id="player2name" title="Player name" maxlength="4" value="Player 2" />
                 <select id="player1color" title="Player color">
                     <option style="color: aqua;">Aqua</option>
@@ -129,7 +110,7 @@
                     <option selected="selected" style="color: yellow;">Yellow</option>
                 </select>
                 <div id="player3input" class="player-input">
-                    <img src="../../images/player3.png" id="player3" class="player3" alt=player3>
+                    <img src="/public/images/player3.png" id="player3" class="player3" alt=player3>
                     Player 3: <input type="text" id="player3name" title="Player name" maxlength="4" value="Player 3" />
                     <select id="player1color" title="Player color">
                         <option style="color: aqua;">Aqua</option>
@@ -150,7 +131,7 @@
                         <option selected="selected" style="color: yellow;">Yellow</option>
                     </select>
                     <div id="player4input" class="player-input">
-                        <img src="../../images/player4.png" id="player4" class="player4" alt=player4>
+                        <img src="/public/images/player4.png" id="player4" class="player4" alt=player4>
                         Player 4: <input type="text" id="player4name" title="Player name" maxlength="4"
                             value="Player 4" />
                         <select id="player1color" title="Player color">
@@ -172,9 +153,9 @@
                             <option selected="selected" style="color: yellow;">Yellow</option>
                         </select>
                         <div style="margin: 20px 0px;">
-                            <input type="button" src="../../images/start-icon.png" value="Start Game" onclick="setup();"
+                            <input type="button" src="/public/images/start-icon.png" value="Start Game" onclick="setup();"
                                 title="Begin playing." />
-                            <img src="../../images/start-icon.png" id="start-icon" class="start-icon" onclick="setup()"
+                            <img src="/public/images/start-icon.png" id="start-icon" class="start-icon" onclick="setup()"
                                 alt=submit>
                         </div>
 
