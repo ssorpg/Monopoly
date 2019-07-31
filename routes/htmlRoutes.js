@@ -5,7 +5,7 @@ const app = express.Router();
 
 
 // MODELS
-const Knex = require('../config/connection');
+// const Knex = require('../config/connection');
 const path = require('path');
 
 

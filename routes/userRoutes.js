@@ -25,7 +25,7 @@ app.get('/api/users', async (req, res) => {
 
 app.post('/api/users', async (req, res) => {
     try {
-        users = req.body["players[]"];
+        let users = req.body["players[]"];
         console.log(users);
         for (let i = 0; i < users.length; i++) {
             const found = await knex.from('users').select('id').where('user_name', '=', users[i]);
