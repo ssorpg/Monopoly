@@ -4,16 +4,27 @@ const knex = require('../config/connection');
 
 
 // FUNCTIONS
-async function getPlayerList() {
+async function getPlayers() {
     return await knex('players').select('*').orderBy('id', 'desc');
+}
+
+async function updatePlayer(player, wait) {
+    if (wait) {
+        await knex('players').update(player).where('name', '=', player.name);
+    }
+    else {
+        knex('players').update(player).where('name', '=', player.name);
+    }
 }
 
 
 
 // EXPORTS
 module.exports = {
-    getPlayers: async function () {
-        const players = await getPlayerList();
+    getPlayers: getPlayers,
+
+    getPlayersResponse: async function () {
+        const players = await getPlayers();
     
         return {
             function: 'setPlayers',
@@ -30,32 +41,19 @@ module.exports = {
         };
     },
 
-    getLastPlayer: async function () {
-        const [newPlayer] = await knex('players').select('*').orderBy('id', 'desc').limit(1);
-        return newPlayer;
-    },
-
-    getNumPlayers: async function () {
-        const players = await getPlayerList();
-
-        return players.length || 1;
-    },
-
-    updatePlayer: async function(player) {
-        await knex('players').update(player).where('name', '=', player.name);
-    },
+    updatePlayer: updatePlayer,
     
     deletePlayer: async function (player) {
         if (player) {
             await knex('players').where('name', '=', player.name).del();
         }
 
-        const players = await getPlayerList();
+        const players = await getPlayers();
 
         let reNumber = 1;
         players.forEach(player => {
             player.player_number = reNumber;
-
+            updatePlayer(player);
             reNumber++;
         });
 

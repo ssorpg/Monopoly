@@ -97,7 +97,7 @@ $(document).ready(() => {
     console.log(ws);
 
     ws.onmessage = (message) => {
-        console.log('Message: ' + message.data);
+        // console.log('Message: ' + message.data);
 
         const data = JSON.parse(message.data);
 

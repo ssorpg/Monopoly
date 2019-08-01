@@ -12,7 +12,7 @@ async function getGameState() {
     return game_state;
 }
 
-async function checkTurn(game_state, player) {
+function checkTurn(game_state, player) {
     console.log(game_state);
 
     if (player.player_number !== game_state.current_player_turn) {
@@ -50,7 +50,8 @@ async function updatePlayerMoney(player) {
 
 
 async function updateCurPlayerTurn(game_state) {
-    let numPlayers = await playerModel.getNumPlayers();
+    const players = await playerModel.getPlayers();
+    let numPlayers = players.length;
 
     if (numPlayers < 2) {
         numPlayers = 2;
@@ -68,7 +69,7 @@ async function updateCurPlayerTurn(game_state) {
 module.exports = {
     doTurn: async function (player) {
         const game_state = await getGameState();
-        const isTurn = await checkTurn(game_state, player);
+        const isTurn = checkTurn(game_state, player);
         
         if (!isTurn) {
             return { function: 'wait' };
@@ -79,7 +80,7 @@ module.exports = {
         player = updatePlayerPosition(player, rolls);
         player = await updatePlayerMoney(player);
 
-        await playerModel.updatePlayer(player);
+        playerModel.updatePlayer(player);
         await updateCurPlayerTurn(game_state);
 
         return {

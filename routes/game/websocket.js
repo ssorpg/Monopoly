@@ -25,24 +25,25 @@ function sendToClients(clients, response, exclude) {
 module.exports = function (wss) {
     wss.on('connection', async function (ws) {
         console.log('Player connected');
+        const players = await playerModel.getPlayers();
 
-        const newPlayer = await playerModel.getLastPlayer();
+        const newPlayer = players[0];
 
-        newPlayer.player_number = await playerModel.getNumPlayers();
+        newPlayer.player_number = players.length || 1;
         ws.player = newPlayer;
 
-        await playerModel.updatePlayer(newPlayer);
+        await playerModel.updatePlayer(newPlayer, true);
 
         const response = {
             function: 'setPlayer',
-            payload: ws.player
+            payload: newPlayer
         };
 
-        sendToClient(ws, await playerModel.getPlayers());
+        sendToClient(ws, await playerModel.getPlayersResponse());
         sendToClients(wss.clients, response, ws);
 
         ws.on('message', async function (message) {
-            console.log('Message: ' + message);
+            // console.log('Message: ' + message);
 
             const data = JSON.parse(message);
             console.log(data);
