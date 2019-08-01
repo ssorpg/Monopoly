@@ -31,6 +31,7 @@ module.exports = {
 		'semi': [
 			'error',
 			'always'
-		]
+		],
+		'require-atomic-upgrades': 'off'
 	}
 };

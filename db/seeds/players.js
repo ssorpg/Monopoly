@@ -1,4 +1,4 @@
-exports.seed = function (knex) {
+exports.seed = function () {
     // return knex('players').del()
     //     .then(function () {
     //         return knex('players').insert([

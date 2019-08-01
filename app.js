@@ -14,6 +14,7 @@ app.use(express.json());
 
 // ROUTES
 require('./routes/html/http')(app);
+require('./routes/api/http')(app);
 
 
 
