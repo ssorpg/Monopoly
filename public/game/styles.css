@@ -101,7 +101,7 @@ body {
 }
 
 .diceImages > img {
-  width: 20px;
+  width: 30px;
 }
 
 /* players */
@@ -125,28 +125,28 @@ body {
 }
 
 /* Player colors */
-.player1 {
+.player1Pos {
   background-color: rgb(77, 166, 255);
-  width: 10px;
-  height: 10px;
+  width: 30px;
+  height: 30px;
 }
 
-.player2 {
+.player2Pos {
   background-color: rgb(255, 77, 106);
-  width: 10px;
-  height: 10px;
+  width: 30px;
+  height: 30px;
 }
 
-.player3 {
+.player3Pos {
   background-color: rgb(77, 255, 77);
-  width: 10px;
-  height: 10px;
+  width: 30px;
+  height: 30px;
 }
 
-.player4 {
+.player4Pos {
   background-color: rgb(255, 166, 77);
-  width: 10px;
-  height: 10px;
+  width: 30px;
+  height: 30px;
 }
 .cell-board-corner{
 background-color: bisque;

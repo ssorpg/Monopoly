@@ -5,9 +5,17 @@ const player = require('../../models/player');
 
 
 // WEBSOCKET FUNCTIONS
-function sendToClients(clients, response) {
+function sendToClient(client, response) {
+    client.send(JSON.stringify(response));
+}
+
+function sendToClients(clients, response, exclude) {
     clients.forEach(client => {
-        client.send(JSON.stringify(response));
+        if (client === exclude) {
+            return;
+        }
+
+        sendToClient(client, response);
     });
 }
 
@@ -16,26 +24,41 @@ function sendToClients(clients, response) {
 // ROUTES
 module.exports = function connection(wss) {
     wss.on('connection', async function (ws) {
-        console.log('Player connected');
+        try {
+            console.log('Player connected');
 
-        const numPlayers = await knex('players').select('*');
-        const newPlayerName = await knex('players').select('name').orderBy('id', 'desc').limit(1);
-    
-        ws.playerNum = numPlayers.length;
-        ws.playerName = newPlayerName[0];
+            const numPlayers = await knex('players').select('*');
+            let [newPlayer] = await knex('players').select('*').orderBy('id', 'desc').limit(1);
 
-        sendToClients(wss.clients, await player.getPlayers());
+            newPlayer.player_number = numPlayers.length || 1;
+            ws.player = newPlayer;
 
-        ws.on('message', async function incoming(funcName) {
-            const response = await player[funcName]();
+            const response = await player.newPlayer(ws);
 
-            sendToClients(wss.clients, response);
-        });
+            sendToClient(ws, await player.getPlayers());
+            sendToClients(wss.clients, response, ws);
 
-        ws.on('close', async () => {
-            await player.deletePlayer(ws.playerID);
+            ws.on('message', async function incoming(funcName) {
+                const response = await player[funcName](ws.player);
 
-            console.log('Player disconnected');
-        });
+                sendToClients(wss.clients, response);
+            });
+
+            ws.on('close', async () => {
+                await player.deletePlayer(ws.player);
+
+                const response = {
+                    function: 'deletePlayer',
+                    payload: ws.player
+                };
+
+                sendToClients(wss.clients, response);
+
+                console.log('Player disconnected');
+            });
+        }
+        catch (err) {
+            console.log(err);
+        }
     });
 };

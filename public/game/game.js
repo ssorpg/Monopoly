@@ -1,44 +1,33 @@
 // ROUTER OBJECT
 const callbacks = {
     setPlayers: setPlayers,
+    setPlayer: setPlayer,
+    deletePlayer: deletePlayer,
     setRoll: setRoll
 };
 
 
 
-// FUNCTIONS
+// ROUTER FUNCTIONS
 function setPlayers(players) {
-    $('.cell').empty();
-    $('#players').empty();
-
-    let playerNum = 1;
     players.forEach(player => {
-        player.playerNum = playerNum;
-
-        setPlayerInfo(player);
-        setPlayerPosition(player);
-
-        playerNum++;
+        setPlayer(player)
     });
 }
 
-function setPlayerInfo(player) {
-    let playerP = $('<p>')
-        .append('<h3>Player ' + player.playerNum + '</h3>')
-        .append('<h4>Name: ' + player.name + '</h4>')
-        .append('<h4>Money: ' + player.money + '</h3>');
-
-    $('#players').append(playerP);
+function setPlayer(player) {
+    setPlayerInfo(player);
+    setPlayerPosition(player);
 }
 
-function setPlayerPosition(player) {
-    let playerDiv = $('<div>')
-        .addClass('player' + player.playerNum);
-
-    $('#cell' + player.position).append(playerDiv);
+function deletePlayer(player) {
+    $('.player' + player.player_number + 'Info').empty();
+    $('.player' + + player.player_number + 'Pos').remove();
 }
 
-function setRoll(roll) {
+function setRoll(player) {
+    const roll = player.rval;
+
     const imgNames = ['1oneDice.png', '2twoDice.png', '3threeDice.png', '4fourDice.png', '5fiveDice.png', '6sixDice.png'];
     const imgPath = '../images/';
 
@@ -48,6 +37,33 @@ function setRoll(roll) {
     const newImg2 = $('<img>').attr('src', imgPath + imgNames[roll.die2 - 1]);
 
     $('.diceImages').append(newImg, newImg2);
+
+    setPlayer(player);
+}
+
+
+
+// HELPER FUNCTIONS
+function setPlayerInfo(player) {
+    let playerInfo = $('.player' + player.player_number + 'Info');
+
+    playerInfo.empty();
+
+    playerInfo
+        .append('<h3>Player ' + player.player_number + '</h3>')
+        .append('<h4>Name: ' + player.name + '</h4>')
+        .append('<h4>Money: ' + player.money + '</h3>');
+
+    $('#players').append(playerInfo);
+}
+
+function setPlayerPosition(player) {
+    $('.player' + + player.player_number + 'Pos').remove();
+
+    const playerPos = $('<div>')
+        .addClass('player' + player.player_number + 'Pos');
+
+    $('#cell' + player.position).append(playerPos);
 }
 
 

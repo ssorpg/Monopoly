@@ -6,7 +6,7 @@
 
 <body>
     <div id="gameFrame">
-        <table id="board" data-id=1>
+        <table id="board">
             <tr>
 
                 <td class="cell-board-corner" id="cell12">12</td>
@@ -50,12 +50,24 @@
                 <td class="cell-board-bottom" id="cell2">2</td>
                 <td class="cell-board-bottom" id="cell1">1</td>
                 <td class="cell-board-corner" id="cell0">0</td>
-              
+
             </tr>
         </table>
         <div id="scoreBoard">score board</div>
-        <div id="dice"><button class="rollDice">Roll</button><p class="diceImages"></p></div>
-        <div id="players"></div>
+        <div id="dice">
+            <button class="rollDice">Roll</button>
+            <p class="diceImages"></p>
+        </div>
+        <div id="players">
+            <p class="player1Info">
+            </p>
+            <p class="player2Info">
+            </p>
+            <p class="player3Info">
+            </p>
+            <p class="player4Info">
+            </p>
+        </div>
         <div id="control">control</div>
     </div>
 
