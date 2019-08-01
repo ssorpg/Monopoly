@@ -4,33 +4,38 @@ const player = require('../../models/player');
 
 
 
+// WEBSOCKET FUNCTIONS
+function sendToClients(clients, response) {
+    clients.forEach(client => {
+        client.send(JSON.stringify(response));
+    });
+}
+
+
+
 // ROUTES
-module.exports = function (wss) {
+module.exports = function connection(wss) {
     wss.on('connection', async function (ws) {
         console.log('Player connected');
 
+        const numPlayers = await knex('players').select('*');
         const newPlayerName = await knex('players').select('name').orderBy('id', 'desc').limit(1);
-        const numPlayers = await knex('players').select('*').count();
     
-        ws.playerNum = numPlayers + 1;
-        ws.playerName = newPlayerName;
+        ws.playerNum = numPlayers.length;
+        ws.playerName = newPlayerName[0];
 
-        player.newPlayer(ws);
+        sendToClients(wss.clients, await player.getPlayers());
 
-        console.log(ws.playerID);
+        ws.on('message', async function incoming(funcName) {
+            const response = await player[funcName]();
 
-        ws.on('message', async function (funcName) {
-            const response = await player[funcName](1);
-
-            wss.clients.forEach(client => {
-                client.send(JSON.stringify(response));
-            });
+            sendToClients(wss.clients, response);
         });
 
         ws.on('close', async () => {
             await player.deletePlayer(ws.playerID);
 
-            console.log('WebSocket was closed');
+            console.log('Player disconnected');
         });
     });
 };
