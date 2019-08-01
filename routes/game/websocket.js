@@ -1,6 +1,6 @@
 // MODELS
-const knex = require('../../config/connection');
-const player = require('../../models/player');
+const playerModel = require('../../models/player');
+const gameModel = require('../../models/game_state');
 
 
 
@@ -26,34 +26,33 @@ module.exports = function (wss) {
     wss.on('connection', async function (ws) {
         console.log('Player connected');
 
-        const numPlayers = await knex('players').select('*');
-        let [newPlayer] = await knex('players').select('*').orderBy('id', 'desc').limit(1);
+        const newPlayer = await playerModel.getLastPlayer();
 
-        newPlayer.player_number = numPlayers.length || 1;
+        newPlayer.player_number = await playerModel.getNumPlayers();
         ws.player = newPlayer;
 
-        const response = await player.newPlayer(ws);
+        await playerModel.updatePlayer(newPlayer);
 
-        sendToClient(ws, await player.getPlayers());
+        const response = {
+            function: 'setPlayer',
+            payload: ws.player
+        };
+
+        sendToClient(ws, await playerModel.getPlayers());
         sendToClients(wss.clients, response, ws);
 
         ws.on('message', async function (message) {
-            console.log(message);
+            console.log('Message: ' + message);
 
             const data = JSON.parse(message);
+            console.log(data);
 
-            const response = await player[data.function](ws.player);
-
+            const response = await gameModel[data.function](ws.player);
             sendToClients(wss.clients, response);
         });
 
         ws.on('close', async () => {
-            await player.deletePlayer(ws.player);
-
-            const response = {
-                function: 'deletePlayer',
-                payload: ws.player
-            };
+            const response = await playerModel.deletePlayer(ws.player);
 
             sendToClients(wss.clients, response);
 

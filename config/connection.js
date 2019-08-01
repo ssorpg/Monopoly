@@ -5,11 +5,12 @@ const knex = require('knex')(config);
 
 
 // RESET TABlE
-async function resetPlayers() {
+async function resetDB() {
     await knex('players').truncate();
+    await knex('game_state').update({ current_player_turn: 1 });
 }
 
-resetPlayers();
+resetDB();
 
 
 

@@ -1,49 +1,9 @@
-// ROUTER OBJECT
-const callbacks = {
-    setPlayers: setPlayers,
-    setPlayer: setPlayer,
-    deletePlayer: deletePlayer,
-    setRoll: setRoll
-};
-
-
-
-// ROUTER FUNCTIONS
-function setPlayers(players) {
-    players.forEach(player => {
-        setPlayer(player)
-    });
-}
-
+// HELPER FUNCTIONS
 function setPlayer(player) {
     setPlayerInfo(player);
     setPlayerPosition(player);
 }
 
-function deletePlayer(player) {
-    $('.player' + player.player_number + 'Info').empty();
-    $('.player' + + player.player_number + 'Pos').remove();
-}
-
-function setRoll(player) {
-    const roll = player.rval;
-
-    const imgNames = ['1oneDice.png', '2twoDice.png', '3threeDice.png', '4fourDice.png', '5fiveDice.png', '6sixDice.png'];
-    const imgPath = '../images/';
-
-    $('.diceImages').empty();
-
-    const newImg = $('<img>').attr('src', imgPath + imgNames[roll.die1 - 1]);
-    const newImg2 = $('<img>').attr('src', imgPath + imgNames[roll.die2 - 1]);
-
-    $('.diceImages').append(newImg, newImg2);
-
-    setPlayer(player);
-}
-
-
-
-// HELPER FUNCTIONS
 function setPlayerInfo(player) {
     let playerInfo = $('.player' + player.player_number + 'Info');
 
@@ -66,13 +26,44 @@ function setPlayerPosition(player) {
 
 
 
+// WEBSOCKET FUNCTIONS
+const wsFunctions = {
+    setPlayer: setPlayer,
+
+    setPlayers: function (players) {
+        players.forEach(player => {
+            setPlayer(player)
+        });
+    },
+
+    setRoll: function (payload) {
+        const player = payload.player
+        const rolls = payload.rolls;
+    
+        const imgNames = ['1oneDice.png', '2twoDice.png', '3threeDice.png', '4fourDice.png', '5fiveDice.png', '6sixDice.png'];
+        const imgPath = '../images/';
+    
+        $('.diceImages').empty();
+    
+        const newImg = $('<img>').attr('src', imgPath + imgNames[rolls.die1 - 1]);
+        const newImg2 = $('<img>').attr('src', imgPath + imgNames[rolls.die2 - 1]);
+    
+        $('.diceImages').append(newImg, newImg2);
+    
+        setPlayer(player);
+    },
+
+    wait: function() {} // So we don't get console errors when server returns nothing
+};
+
+
+
 // EVENT LISTENERS
 function setUpEventListeners(ws) {
     // roll dice
     $('.rollDice').on('click', async () => {
         const request = {
-            model: 'player',
-            function: 'rollDice'
+            function: 'doTurn'
         }
 
         ws.send(JSON.stringify(request));
@@ -106,20 +97,14 @@ $(document).ready(() => {
     console.log(ws);
 
     ws.onmessage = (message) => {
-        console.log(message);
+        console.log('Message: ' + message.data);
 
         const data = JSON.parse(message.data);
 
-        callbacks[data.function](data.payload);
+        console.log(data);
+
+        wsFunctions[data.function](data.payload);
     }
 
     setUpEventListeners(ws);
 });
-
-
-
-// $('.logOut').on('click', () => {
-//     sessionStorage.setItem('monopolyUsername', user_name);
-//     localStorage.removeItem('monopolyUsername');
-//     location.reload();
-// });

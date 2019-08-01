@@ -1,84 +1,67 @@
 // MODELS
 const knex = require('../config/connection');
-const space = require('./space');
 
 
 
 // FUNCTIONS
-async function getPlayers() {
-    const players = await knex('players').select('*');
-
-    return {
-        function: 'setPlayers',
-        payload: players
-    };
-}
-
-async function getPlayerByName(playerName) {
-    const player = await knex('players').select('*').where('name', '=', playerName);
-
-    return {
-        function: 'setPlayers',
-        payload: player
-    };
-}
-
-async function newPlayer(ws) {
-    await knex('players').update(ws.player).where('name', '=', ws.player.name);
-
-    return {
-        function: 'setPlayer',
-        payload: ws.player
-    };
-}
-
-
-async function rollDice(player) {
-    const rval = {
-        die1: 0,
-        die2: 0
-    };
-
-    rval.die1 = Math.floor((Math.random() * 6) + 1);
-    rval.die2 = Math.floor((Math.random() * 6) + 1);
-
-    const dieSum = rval.die1 + rval.die2;
-
-    if (player.position + dieSum > 23) {
-        player.position = player.position + dieSum - 23;
-    }
-    else {
-        player.position = player.position + dieSum;
-    }
-
-    const curSpace = await space.checkSpace(player.position);
-    
-    player.money += curSpace.money_gained;
-    player.money -= curSpace.money_lost;
-
-    knex('users').update(player).where('name', '=', player.name);
-    
-    player.rval = rval;
-
-    return {
-        function: 'setRoll',
-        payload: player
-    };
-}
-
-async function deletePlayer(player) {
-    if (player) {
-        await knex('players').where('name', '=', player.name).del();
-    }
+async function getPlayerList() {
+    return await knex('players').select('*').orderBy('id', 'desc');
 }
 
 
 
 // EXPORTS
 module.exports = {
-    getPlayers: getPlayers,
-    getPlayerByName: getPlayerByName,
-    newPlayer: newPlayer,
-    rollDice: rollDice,
-    deletePlayer: deletePlayer
+    getPlayers: async function () {
+        const players = await getPlayerList();
+    
+        return {
+            function: 'setPlayers',
+            payload: players
+        };
+    },
+    
+    getPlayerByName: async function (playerName) {
+        const player = await knex('players').select('*').where('name', '=', playerName);
+    
+        return {
+            function: 'setPlayers',
+            payload: player
+        };
+    },
+
+    getLastPlayer: async function () {
+        const [newPlayer] = await knex('players').select('*').orderBy('id', 'desc').limit(1);
+        return newPlayer;
+    },
+
+    getNumPlayers: async function () {
+        const players = await getPlayerList();
+
+        return players.length || 1;
+    },
+
+    updatePlayer: async function(player) {
+        await knex('players').update(player).where('name', '=', player.name);
+    },
+    
+    deletePlayer: async function (player) {
+        if (player) {
+            await knex('players').where('name', '=', player.name).del();
+        }
+
+        const players = await getPlayerList();
+
+        let reNumber = 1;
+        players.forEach(player => {
+            player.player_number = reNumber;
+
+            reNumber++;
+        });
+
+        return {
+            function: 'setPlayers',
+            payload: players
+        };
+    }
 };
