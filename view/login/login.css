@@ -3,7 +3,7 @@ body {
   overflow: hidden;
   font-family: 'Fredericka the Great', cursive;
   color:burlywood;
-  background-image: url("/public/images/background-2.jpg");
+  background-image: url("images/background-2.jpg");
   cursor: url(http://www.rw-designer.com/cursor-extern.php?id=85612);
 }
 /*refresh*/
