@@ -70,6 +70,7 @@ function setPlayerPosition(player) {
 
 // EVENT LISTENERS
 function setUpEventListeners(ws) {
+    // roll dice
     $('.rollDice').on('click', async () => {
         const request = {
             model: 'player',
@@ -78,6 +79,24 @@ function setUpEventListeners(ws) {
 
         ws.send(JSON.stringify(request));
     });
+
+    // bid 
+    $(".bid").on("click", async () => {
+        // TODO: need to define function "bid" in player.js
+        console.log("Will call ws.send('bid')");
+    })
+
+    // buy 
+    $(".buy").on("click", async () => {
+        // TODO: need to define function "buy" in player.js
+        console.log("Will call ws.send('buy')");
+    })
+
+    // trade 
+    $(".trade").on("click", async () => {
+        // TODO: need to define function "trade" in player.js
+        console.log("Will call ws.send('trade')");
+    })
 }
 
 
