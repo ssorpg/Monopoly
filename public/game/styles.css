@@ -52,32 +52,32 @@ body {
 }
 
 .cell-board-corner {
-	width: 120px;
-  height: 120px;
+	width: 100px;
+  height: 100px;
   border: solid black 1px;
 }
 
 .cell-board-top {
-	width: 120px;
+	width: 100px;
   height: auto;
   border: dashed black 1px;
 }
 
 .cell-board-bottom {
-	width: 120px;
+	width: 100px;
   height: auto;
   border: dashed black 1px;
 }
 
 .cell-board-left {
 	width: auto;
-  height: 120px;
+  height: 100px;
   border: solid black 1px;
 }
 
 .cell-board-right {
   width: auto;
-  height: 120px;
+  height: 100px;
   border: solid black 1px;
 }
 
@@ -97,6 +97,7 @@ body {
   width: 100px;
   height: 100px;
   left: 50px;
+  bottom: 100px;
   border: solid lightcoral 3px;
 }
 
