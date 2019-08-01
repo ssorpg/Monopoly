@@ -17,15 +17,6 @@ async function updatePlayer(player) {
 // EXPORTS
 module.exports = {
     getPlayers: getPlayers,
-    
-    getPlayerByName: async function (playerName) {
-        const player = await knex('players').select('*').where('name', '=', playerName);
-    
-        return {
-            function: 'setPlayers',
-            payload: player
-        };
-    },
 
     updatePlayer: updatePlayer,
     

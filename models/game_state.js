@@ -13,7 +13,7 @@ async function getGameState() {
 }
 
 function checkTurn(game_state, player) {
-    // console.log(game_state);
+    console.log(game_state);
 
     if (player.player_number !== game_state.current_player_turn) {
         return false;
@@ -67,6 +67,8 @@ async function updateCurPlayerTurn(game_state) {
 
 // EXPORTS
 module.exports = {
+    getGameState: getGameState,
+    
     doTurn: async function (player) {
         const game_state = await getGameState();
         const isTurn = checkTurn(game_state, player);
@@ -90,5 +92,7 @@ module.exports = {
                 rolls: rolls
             }
         };
-    }
+    },
+
+    updateCurPlayerTurn: updateCurPlayerTurn
 };

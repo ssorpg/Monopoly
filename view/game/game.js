@@ -19,7 +19,8 @@ function setPlayerPosition(player) {
     $('.player' + + player.player_number + 'Pos').remove();
 
     const playerPos = $('<div>')
-        .addClass('player' + player.player_number + 'Pos');
+        .addClass('player' + player.player_number + 'Pos')
+        .addClass('positionMarker');
 
     $('#cell' + player.position).append(playerPos);
 }
@@ -31,8 +32,11 @@ const wsFunctions = {
     setPlayer: setPlayer,
 
     setPlayers: function (players) {
+        $('#playerInfo').children().empty();
+        $('.positionMarker').remove();
+
         players.forEach(player => {
-            setPlayer(player)
+            setPlayer(player);
         });
     },
 

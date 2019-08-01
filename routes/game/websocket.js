@@ -58,10 +58,14 @@ module.exports = function (wss) {
 
         ws.on('close', async () => {
             const response = await playerModel.deletePlayer(ws.player);
+            let game_state = await gameModel.getGameState();
+            game_state.current_player_turn++;
+
+            await gameModel.updateCurPlayerTurn(game_state);
 
             sendToClients(wss.clients, response);
 
-            console.log('Player disconnected');
+            console.log('\nPlayer disconnected');
         });
     });
 };
