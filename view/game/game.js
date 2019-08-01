@@ -53,8 +53,6 @@ function setPlayerInfo(player) {
         .append('<h3>Player ' + player.player_number + '</h3>')
         .append('<h4>Name: ' + player.name + '</h4>')
         .append('<h4>Money: ' + player.money + '</h3>');
-
-    $('#players').append(playerInfo);
 }
 
 function setPlayerPosition(player) {

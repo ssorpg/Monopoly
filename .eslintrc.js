@@ -32,6 +32,8 @@ module.exports = {
 			'error',
 			'always'
 		],
-		'require-atomic-upgrades': 'off'
+		'require-atomic-updates': [
+			'off'
+		]
 	}
 };

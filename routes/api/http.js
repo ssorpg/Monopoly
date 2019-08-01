@@ -1,12 +1,10 @@
 // REQUIRES
-const path = require('path');
 const knex = require('../../config/connection');
 
 
 
 // ROUTES
 module.exports = function(app) {
-
     app.post('/api/players', async function (req, res) {
         try {
             const players = await knex('players').select('*');
