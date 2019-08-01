@@ -3,7 +3,7 @@ body {
   /* overflow: hidden; */
   font-family: 'Fredericka the Great', cursive;
   color: burlywood;
-  background-image: url("../images/background-2.jpg");
+  background-image: url("images/background-2.jpg");
 }
 
 /*playerinput*/
@@ -113,6 +113,7 @@ body {
   margin-left: 1200px;
   bottom: 250px;
   border: dashed lightskyblue 4px;
+  background-color: white;
 }
 
 #control {

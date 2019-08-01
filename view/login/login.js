@@ -1,5 +1,5 @@
 $(function () {
-    $("#submitGameButton").on("click", function (event) {
+    $('#submitGameButton').on('click', function (event) {
         event.preventDefault();
 
         const player = { name: $('#playerName').val() };
@@ -7,7 +7,7 @@ $(function () {
         // use user api to send player names as players
         $.post('/api/players', player)
             .then(() => {
-                window.location.href = 'http://localhost:8080/public/game/game.html?name=' + player.name;
-            })
-    })
-})
+                window.location.href = '/game';
+            });
+    });
+});
