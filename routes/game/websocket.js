@@ -22,7 +22,7 @@ function sendToClients(clients, response, exclude) {
 
 
 // ROUTES
-module.exports = function connection(wss) {
+module.exports = function (wss) {
     wss.on('connection', async function (ws) {
         console.log('Player connected');
 
@@ -37,8 +37,12 @@ module.exports = function connection(wss) {
         sendToClient(ws, await player.getPlayers());
         sendToClients(wss.clients, response, ws);
 
-        ws.on('message', async function incoming(funcName) {
-            const response = await player[funcName](ws.player);
+        ws.on('message', async function (message) {
+            console.log(message);
+
+            const data = JSON.parse(message);
+
+            const response = await player[data.function](ws.player);
 
             sendToClients(wss.clients, response);
         });

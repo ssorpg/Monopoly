@@ -71,7 +71,12 @@ function setPlayerPosition(player) {
 // EVENT LISTENERS
 function setUpEventListeners(ws) {
     $('.rollDice').on('click', async () => {
-        ws.send('rollDice');
+        const request = {
+            model: 'player',
+            function: 'rollDice'
+        }
+
+        ws.send(JSON.stringify(request));
     });
 }
 

@@ -1,7 +1,7 @@
 exports.seed = function (knex) {
-    return knex('players').del()
+    return knex('spaces').del()
         .then(function () {
-            return knex('players').insert([
+            return knex('spaces').insert([
                 { id: 1, money_lost: 0, money_gained: 200 },
                 { id: 2, money_lost: 60, money_gained: 0 },
                 { id: 3, money_lost: 0, money_gained: 150 },

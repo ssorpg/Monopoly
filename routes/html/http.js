@@ -40,17 +40,13 @@ module.exports = function (app) {
         try {
             const players = await knex('players').select('*');
 
-            const alreadyHasName = players.forEach(player => {
-                if (player.name === req.query.name) {
-                    return true;
-                }
-            });
+            const [alreadyHasName] = players.filter(player => { return player.name === req.body.name; });
 
             const newPlayer = {
                 name: req.body.name,
                 money: 1500,
                 position: 0
-            }
+            };
 
             if (players.length > 3) {
                 res.status(400).send('The game is full.');

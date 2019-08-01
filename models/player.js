@@ -1,5 +1,6 @@
 // MODELS
 const knex = require('../config/connection');
+const space = require('./space');
 
 
 
@@ -50,8 +51,10 @@ async function rollDice(player) {
         player.position = player.position + dieSum;
     }
 
-    knex('users').update(player).where('name', '=', player.name);
+    player = await space.checkSpace(player);
 
+    knex('users').update(player).where('name', '=', player.name);
+    
     player.rval = rval;
 
     return {
