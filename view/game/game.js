@@ -97,11 +97,11 @@ $(document).ready(() => {
     console.log(ws);
 
     ws.onmessage = (message) => {
-        // console.log('Message: ' + message.data);
+        console.log('\nMessage: ' + message.data);
 
         const data = JSON.parse(message.data);
 
-        console.log(data);
+        // console.log(data);
 
         wsFunctions[data.function](data.payload);
     }

@@ -24,7 +24,7 @@ function sendToClients(clients, response, exclude) {
 // ROUTES
 module.exports = function (wss) {
     wss.on('connection', async function (ws) {
-        console.log('Player connected');
+        console.log('\nPlayer connected');
         const players = await playerModel.getPlayers();
 
         const newPlayer = players[0];
@@ -32,21 +32,25 @@ module.exports = function (wss) {
         newPlayer.player_number = players.length || 1;
         ws.player = newPlayer;
 
-        await playerModel.updatePlayer(newPlayer, true);
+        let response = {
+            function: 'setPlayers',
+            payload: players
+        };
+        sendToClient(ws, response);
 
-        const response = {
+        response = {
             function: 'setPlayer',
             payload: newPlayer
         };
-
-        sendToClient(ws, await playerModel.getPlayersResponse());
         sendToClients(wss.clients, response, ws);
 
+        await playerModel.updatePlayer(newPlayer);
+
         ws.on('message', async function (message) {
-            // console.log('Message: ' + message);
+            console.log('\nMessage: ' + message);
 
             const data = JSON.parse(message);
-            console.log(data);
+            // console.log(data);
 
             const response = await gameModel[data.function](ws.player);
             sendToClients(wss.clients, response);

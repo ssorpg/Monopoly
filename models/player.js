@@ -8,13 +8,8 @@ async function getPlayers() {
     return await knex('players').select('*').orderBy('id', 'desc');
 }
 
-async function updatePlayer(player, wait) {
-    if (wait) {
-        await knex('players').update(player).where('name', '=', player.name);
-    }
-    else {
-        knex('players').update(player).where('name', '=', player.name);
-    }
+async function updatePlayer(player) {
+    await knex('players').update(player).where('name', '=', player.name);
 }
 
 
@@ -22,15 +17,6 @@ async function updatePlayer(player, wait) {
 // EXPORTS
 module.exports = {
     getPlayers: getPlayers,
-
-    getPlayersResponse: async function () {
-        const players = await getPlayers();
-    
-        return {
-            function: 'setPlayers',
-            payload: players
-        };
-    },
     
     getPlayerByName: async function (playerName) {
         const player = await knex('players').select('*').where('name', '=', playerName);
@@ -51,9 +37,9 @@ module.exports = {
         const players = await getPlayers();
 
         let reNumber = 1;
-        players.forEach(player => {
+        players.forEach(async player => {
             player.player_number = reNumber;
-            updatePlayer(player);
+            await updatePlayer(player);
             reNumber++;
         });
 
