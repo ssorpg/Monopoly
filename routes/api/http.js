@@ -14,7 +14,7 @@ module.exports = function(app) {
             const newPlayer = {
                 name: req.body.name,
                 money: 1500,
-                position: 0
+                position: 1
             };
 
             if (players.length > 3) {
