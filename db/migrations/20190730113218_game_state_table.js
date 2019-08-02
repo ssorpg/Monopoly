@@ -1,7 +1,7 @@
 exports.up = function (knex) {
     return knex.schema.createTable('game_state', table => {
         table.increments('id').primary();
-        table.integer('currrent_player_turn');
+        table.integer('current_player_turn');
     });
 };
 

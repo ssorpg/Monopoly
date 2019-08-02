@@ -106,7 +106,7 @@ body {
 }
 
 /* players */
-#players {
+#playerInfo {
   position: absolute;
   width: 200px;
   height: 500px;
@@ -127,28 +127,25 @@ body {
 }
 
 /* Player colors */
-.player1Pos {
-  background-color: rgb(77, 166, 255);
+.positionMarker {
   width: 30px;
   height: 30px;
+}
+
+.player1Pos {
+  background-color: rgb(77, 166, 255);
 }
 
 .player2Pos {
   background-color: rgb(255, 77, 106);
-  width: 30px;
-  height: 30px;
 }
 
 .player3Pos {
   background-color: rgb(77, 255, 77);
-  width: 30px;
-  height: 30px;
 }
 
 .player4Pos {
   background-color: rgb(255, 166, 77);
-  width: 30px;
-  height: 30px;
 }
 .cell-board-corner{
 background-color: bisque;

@@ -1,75 +1,15 @@
 // MODELS
 const knex = require('../config/connection');
-const space = require('./space');
 
 
 
 // FUNCTIONS
 async function getPlayers() {
-    const players = await knex('players').select('*');
-
-    return {
-        function: 'setPlayers',
-        payload: players
-    };
+    return await knex('players').select('*').orderBy('id', 'desc');
 }
 
-async function getPlayerByName(playerName) {
-    const player = await knex('players').select('*').where('name', '=', playerName);
-
-    return {
-        function: 'setPlayers',
-        payload: player
-    };
-}
-
-async function newPlayer(ws) {
-    await knex('players').update(ws.player).where('name', '=', ws.player.name);
-
-    return {
-        function: 'setPlayer',
-        payload: ws.player
-    };
-}
-
-
-async function rollDice(player) {
-    const rval = {
-        die1: 0,
-        die2: 0
-    };
-
-    rval.die1 = Math.floor((Math.random() * 6) + 1);
-    rval.die2 = Math.floor((Math.random() * 6) + 1);
-
-    const dieSum = rval.die1 + rval.die2;
-
-    if (player.position + dieSum > 23) {
-        player.position = player.position + dieSum - 23;
-    }
-    else {
-        player.position = player.position + dieSum;
-    }
-
-    const curSpace = await space.checkSpace(player.position);
-    
-    player.money += curSpace.money_gained;
-    player.money -= curSpace.money_lost;
-
-    knex('users').update(player).where('name', '=', player.name);
-    
-    player.rval = rval;
-
-    return {
-        function: 'setRoll',
-        payload: player
-    };
-}
-
-async function deletePlayer(player) {
-    if (player) {
-        await knex('players').where('name', '=', player.name).del();
-    }
+async function updatePlayer(player) {
+    await knex('players').update(player).where('name', '=', player.name);
 }
 
 
@@ -77,8 +17,26 @@ async function deletePlayer(player) {
 // EXPORTS
 module.exports = {
     getPlayers: getPlayers,
-    getPlayerByName: getPlayerByName,
-    newPlayer: newPlayer,
-    rollDice: rollDice,
-    deletePlayer: deletePlayer
+
+    updatePlayer: updatePlayer,
+    
+    deletePlayer: async function (player) {
+        if (player) {
+            await knex('players').where('name', '=', player.name).del();
+        }
+
+        const players = await getPlayers();
+
+        let reNumber = 1;
+        players.forEach(async player => {
+            player.player_number = reNumber;
+            await updatePlayer(player);
+            reNumber++;
+        });
+
+        return {
+            function: 'setPlayers',
+            payload: players
+        };
+    }
 };

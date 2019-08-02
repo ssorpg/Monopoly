@@ -1,6 +1,6 @@
 // MODELS
-const knex = require('../../config/connection');
-const player = require('../../models/player');
+const playerModel = require('../../models/player');
+const gameModel = require('../../models/game_state');
 
 
 
@@ -24,40 +24,48 @@ function sendToClients(clients, response, exclude) {
 // ROUTES
 module.exports = function (wss) {
     wss.on('connection', async function (ws) {
-        console.log('Player connected');
+        console.log('\nPlayer connected');
+        const players = await playerModel.getPlayers();
 
-        const numPlayers = await knex('players').select('*');
-        let [newPlayer] = await knex('players').select('*').orderBy('id', 'desc').limit(1);
+        const newPlayer = players[0];
 
-        newPlayer.player_number = numPlayers.length || 1;
+        newPlayer.player_number = players.length || 1;
         ws.player = newPlayer;
 
-        const response = await player.newPlayer(ws);
+        let response = {
+            function: 'setPlayers',
+            payload: players
+        };
+        sendToClient(ws, response);
 
-        sendToClient(ws, await player.getPlayers());
+        response = {
+            function: 'setPlayer',
+            payload: newPlayer
+        };
         sendToClients(wss.clients, response, ws);
 
+        await playerModel.updatePlayer(newPlayer);
+
         ws.on('message', async function (message) {
-            console.log(message);
+            console.log('\nMessage: ' + message);
 
             const data = JSON.parse(message);
+            // console.log(data);
 
-            const response = await player[data.function](ws.player);
-
+            const response = await gameModel[data.function](ws.player);
             sendToClients(wss.clients, response);
         });
 
         ws.on('close', async () => {
-            await player.deletePlayer(ws.player);
+            const response = await playerModel.deletePlayer(ws.player);
+            let game_state = await gameModel.getGameState();
+            game_state.current_player_turn++;
 
-            const response = {
-                function: 'deletePlayer',
-                payload: ws.player
-            };
+            await gameModel.updateCurPlayerTurn(game_state);
 
             sendToClients(wss.clients, response);
 
-            console.log('Player disconnected');
+            console.log('\nPlayer disconnected');
         });
     });
 };
