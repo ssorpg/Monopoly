@@ -1,7 +1,12 @@
+// DOTENV FOR DEBUG
+require('dotenv').config();
+
+
+
 // MODELS
 const knex = require('../config/connection');
 const playerModel = require('./player');
-const spaceModel = require('./space');
+const tileModel = require('./tile');
 
 
 
@@ -13,9 +18,9 @@ async function getGameState() {
 }
 
 function checkTurn(game_state, player) {
-    console.log(game_state);
+    // console.log(game_state);
 
-    if (player.player_number !== game_state.current_player_turn) {
+    if (player.player_number !== game_state.current_player_turn && process.env.NODE_ENV) {
         return false;
     }
 
@@ -39,11 +44,9 @@ function updatePlayerPosition(player, rolls) {
     return player;
 }
 
-async function updatePlayerMoney(player) {
-    const curSpace = await spaceModel.getSpace(player.position);
-        
-    player.money += curSpace.money_gained;
-    player.money -= curSpace.money_lost;
+function updatePlayerMoney(player, curTile) {
+    player.money += curTile.money_gained;
+    player.money -= curTile.money_lost;
 
     return player;
 }
@@ -79,8 +82,11 @@ module.exports = {
 
         const rolls = rollDice();
 
+        const curTile = await tileModel.getTile(player.position);
         player = updatePlayerPosition(player, rolls);
-        player = await updatePlayerMoney(player);
+        player = updatePlayerMoney(player, curTile);
+
+        console.log(player);
 
         playerModel.updatePlayer(player);
         await updateCurPlayerTurn(game_state);
@@ -89,7 +95,12 @@ module.exports = {
             function: 'setRoll',
             payload: {
                 player: player,
-                rolls: rolls
+                rolls: rolls,
+                tile: {
+                    type: curTile.type,
+                    property_cost: curTile.property_cost,
+                    description: curTile.description
+                }
             }
         };
     },
