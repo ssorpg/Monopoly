@@ -5,6 +5,7 @@ exports.up = function (knex) {
         table.string('name');
         table.integer('money');
         table.integer('position');
+        table.string('hash');
     });
 };
 

@@ -25,6 +25,10 @@ function setPlayerPosition(player) {
     $('#cell' + player.position).append(playerPos);
 }
 
+function setTileDescription(description) {
+    $('#message').text(description);
+}
+
 
 
 // WEBSOCKET FUNCTIONS
@@ -55,6 +59,7 @@ const wsFunctions = {
         $('.diceImages').append(newImg, newImg2);
     
         setPlayer(player);
+        setTileDescription(payload.tile.description);
     },
 
     wait: function() {} // So we don't get console errors when server returns nothing

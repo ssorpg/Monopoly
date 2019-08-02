@@ -16,8 +16,8 @@ $(function () {
 
             // use user api to send player names as players
             $.post('/api/players', player)
-                .then(() => {
-                    window.location.href = '/game';
+                .then((res) => {
+                    window.location.href = '/game?name=' + player.name + '&hash=' + res;
             });
         })
     });

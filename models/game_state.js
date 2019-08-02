@@ -36,11 +36,15 @@ function rollDice() {
     return rolls;
 }
 
-function updatePlayerPosition(player, rolls) {
+function updatePlayerPos(player, rolls) {
     const dieSum = rolls.die1 + rolls.die2;
-    
-    player.position = (player.position + dieSum) % 24;
 
+    if (player.position + dieSum > 24) {
+        player.money += 200;
+    }
+
+    player.position = (player.position + dieSum) % 24;
+    
     return player;
 }
 
@@ -50,7 +54,6 @@ function updatePlayerMoney(player, curTile) {
 
     return player;
 }
-
 
 async function updateCurPlayerTurn(game_state) {
     const players = await playerModel.getPlayers();
@@ -62,6 +65,14 @@ async function updateCurPlayerTurn(game_state) {
 
     game_state.current_player_turn = game_state.current_player_turn % numPlayers;
     game_state.current_player_turn++;
+
+    await knex('game_state').update(game_state);
+}
+
+async function checkGameInProgress(game_state) {
+    if (!game_state.in_progress && game_state.current_player_turn === 3) {
+        game_state.in_progress = true;
+    }
 
     await knex('game_state').update(game_state);
 }
@@ -81,15 +92,14 @@ module.exports = {
         }
 
         const rolls = rollDice();
+        player = updatePlayerPos(player, rolls);
 
         const curTile = await tileModel.getTile(player.position);
-        player = updatePlayerPosition(player, rolls);
         player = updatePlayerMoney(player, curTile);
 
-        console.log(player);
-
         playerModel.updatePlayer(player);
-        await updateCurPlayerTurn(game_state);
+        updateCurPlayerTurn(game_state);
+        checkGameInProgress(game_state);
 
         return {
             function: 'setRoll',
@@ -97,8 +107,6 @@ module.exports = {
                 player: player,
                 rolls: rolls,
                 tile: {
-                    type: curTile.type,
-                    property_cost: curTile.property_cost,
                     description: curTile.description
                 }
             }

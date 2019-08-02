@@ -22,7 +22,7 @@ module.exports = {
     
     deletePlayer: async function (player) {
         if (player) {
-            await knex('players').where('name', '=', player.name).del();
+            knex('players').where('name', '=', player.name).del();
         }
 
         const players = await getPlayers();
@@ -30,7 +30,7 @@ module.exports = {
         let reNumber = 1;
         players.forEach(async player => {
             player.player_number = reNumber;
-            await updatePlayer(player);
+            updatePlayer(player);
             reNumber++;
         });
 
