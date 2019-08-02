@@ -3,6 +3,7 @@
 <head>
     <title>Monopoly Login</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Fredericka+the+Great&display=swap" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -14,58 +15,30 @@
         <h1>Refresh this page to start a new game.</h1>
         <img id="refreshIcon" src="refresh-icon.png" />
     </div> -->
-    <div id="moneybarwrap">
-        <div id="moneybar">
+    <div class="container text-center" id="moneybarwrap">
             <table>
                 <tr id="moneybarrow0" class="money-bar-row">
 
                     <td class="moneybararrowcell"><img src="images/arrow-icon.png" id="p0arrow"
                             class="money-bar-arrow" alt=">" /></td>
                     <td id="p0moneybar" class="moneybarcell">
-                        <div><span id="p0moneyname">Welcome to Monopoly!</span>:</div>
-                        <div><span id="p0money">Kickoff fund: $1500</span></div>
+                        <div><h1><span id="p0moneyname">Welcome to Monopoly!</span></h1></div>
+                        <div><h2><span id="p0money">Kickoff fund: $1500</span></h2></div>
                     </td>
-
                 </tr>
             </table>
-        </div>
     </div>
 
-    <div id="setup">
-        <!-- <div style="margin-bottom: 20px;">
-            Select number of players.
-            <select id="playernumber" title="Select the number of players for the game.">
-                <option>2</option>
-                <option>3</option>
-                <option selected="selected">4</option>
-            </select>
-        </div> -->
+    <div class="container text-center" id="setup">
         <div class="player-input">
-            <img src="images/player1.png" width="50" height="50" id="player1" class="player1" alt=player1>
-            Player 1: <input type="text" id="playerName" title="Player name" maxlength="4" value="Player 1" />
-            <!-- <select id="player1color" title="Player color">
-                <option style="color: aqua;">Aqua</option>
-                <option style="color: black;">Black</option>
-                <option style="color: blue;">Blue</option>
-                <option style="color: fuchsia;">Fuchsia</option>
-                <option style="color: gray;">Gray</option>
-                <option style="color: green;">Green</option>
-                <option style="color: lime;">Lime</option>
-                <option style="color: maroon;">Maroon</option>
-                <option style="color: navy;">Navy</option>
-                <option style="color: olive;">Olive</option>
-                <option style="color: orange;">Orange</option>
-                <option style="color: purple;">Purple</option>
-                <option style="color: red;">Red</option>
-                <option style="color: silver;">Silver</option>
-                <option style="color: teal;">Teal</option>
-                <option selected="selected" style="color: yellow;">Yellow</option>
-            </select> -->
+            <img src="images/player1.png" width="50" height="50" id="player" class="player1" alt=player1>
+            Put your name here: <input type="text" id="playerName" title="Player name" maxlength="4" value="Player" />
             <div style="margin: 20px 0px;">
-                <button src="images/start-icon.png" id="submitGameButton" title="Begin playing.">Start
-                    Game</button>
+                
                 <img src="images/start-icon.png" id="start-icon" class="start-icon" alt=submit>
             </div>
+            <button src="images/start-icon.png" id="submitGameButton" title="Begin playing.">Start
+                Game</button>
         </div>
     </div>
 
