@@ -1,3 +1,8 @@
+// REQUIRES
+require('dotenv').config();
+
+
+
 // MODELS
 const knex = require('../config/connection');
 const playerModel = require('./player');
@@ -15,7 +20,7 @@ async function getGameState() {
 function checkTurn(game_state, player) {
     console.log(game_state);
 
-    if (player.player_number !== game_state.current_player_turn) {
+    if (player.player_number !== game_state.current_player_turn && process.env.NODE_ENV) {
         return false;
     }
 
