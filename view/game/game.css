@@ -95,7 +95,7 @@ body {
 #scoreBoard {
   position: absolute;
   bottom: 450px;
-  left: 50px;
+  left: 300px;
   width: 100px;
   height: 300px;
   border: dashed lightskyblue 4px;
@@ -107,7 +107,7 @@ body {
   width: 100px;
   height: 100px;
   left: 50px;
-  bottom: 100px;
+  bottom: 50px;
   border: solid lightcoral 3px;
 }
 
@@ -119,9 +119,9 @@ body {
 #playerInfo {
   position: absolute;
   width: 200px;
-  height: 500px;
+  height: 450px;
   margin-left: 1200px;
-  bottom: 250px;
+  bottom: 330px;
   border: dashed lightskyblue 4px;
   background-color: rgba(255, 255, 255, 0.45);
 }

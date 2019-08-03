@@ -77,6 +77,16 @@ async function checkGameInProgress(game_state) {
     await knex('game_state').update(game_state);
 }
 
+async function checkLosers() {
+    let losers = await knex("players").select("*").where("money", "<=", 0);
+    return {
+        function: "checkLosers",
+        payload : {
+            losers: losers
+        }
+    }
+}
+
 
 
 // EXPORTS
@@ -113,5 +123,7 @@ module.exports = {
         };
     },
 
-    updateCurPlayerTurn: updateCurPlayerTurn
+    updateCurPlayerTurn: updateCurPlayerTurn,
+
+    checkLosers : checkLosers
 };
