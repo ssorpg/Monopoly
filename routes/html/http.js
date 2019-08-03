@@ -6,7 +6,7 @@ const playerModel = require('../../models/player');
 
 // ROUTES
 module.exports = function (app) {
-    app.get('/', function (req, res) {
+    app.get('/', (req, res) => {
         try {
             res.status(200).sendFile('view/login/login.html', { root: path.dirname('../') });
         }
@@ -16,7 +16,7 @@ module.exports = function (app) {
         }
     });
 
-    app.get('/login.js', function (req, res) {
+    app.get('/login.js', (req, res) => {
         try {
             res.status(200).sendFile('view/login/login.js', { root: path.dirname('../') });
         }
@@ -26,7 +26,7 @@ module.exports = function (app) {
         }
     });
 
-    app.get('/login.css', function (req, res) {
+    app.get('/login.css', (req, res) => {
         try {
             res.status(200).sendFile('view/login/login.css', { root: path.dirname('../') });
         }
@@ -36,7 +36,7 @@ module.exports = function (app) {
         }
     });
 
-    app.get('/game', async function (req, res) {
+    app.get('/game', async (req, res) => {
         try {
             const players = await playerModel.getPlayers();
 
@@ -60,7 +60,7 @@ module.exports = function (app) {
         }
     });
 
-    app.get('/game.js', function (req, res) {
+    app.get('/game.js', (req, res) => {
         try {
             res.status(200).sendFile('view/game/game.js', { root: path.dirname('../') });
         }
@@ -70,7 +70,7 @@ module.exports = function (app) {
         }
     });
 
-    app.get('/game.css', function (req, res) {
+    app.get('/game.css', (req, res) => {
         try {
             res.status(200).sendFile('view/game/game.css', { root: path.dirname('../') });
         }
@@ -80,7 +80,7 @@ module.exports = function (app) {
         }
     });
 
-    app.get('/images/:name', function (req, res) {
+    app.get('/images/:name', (req, res) => {
         try {
             res.status(200).sendFile('view/images/' + req.params.name, { root: path.dirname('../') });
         }

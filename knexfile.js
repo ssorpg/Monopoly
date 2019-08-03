@@ -50,6 +50,4 @@ const configs = {
 
 
 // EXPORTS
-module.exports = configs[process.env.NODE_ENV]
-    ? configs[process.env.NODE_ENV]
-    : configs.development;
+module.exports = configs[process.env.NODE_ENV] ? configs[process.env.NODE_ENV] : configs.development;

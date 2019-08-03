@@ -1,16 +1,16 @@
 let playerImgFiles = [
-    "player1.png",
-    "player2.png",
-    "player3.png",
-    "player4.png"
+    'player1.png',
+    'player2.png',
+    'player3.png',
+    'player4.png'
 ];
 
 $(function () {
     $('#submitGameButton').on('click', function (event) {
         event.preventDefault();
 
-        $("#start-icon").animate({
-            marginTop : "-=100px"
+        $('#start-icon').animate({
+            marginTop : '-=100px'
         }, 2000, function() {
             const player = { name: $('#playerName').val() };
 
@@ -22,7 +22,7 @@ $(function () {
         })
     });
 
-    $("#player").on("click", function () {
-        $(this).attr("src", "images/"+playerImgFiles[Math.floor(Math.random() * playerImgFiles.length)]);
+    $('#player').on('click', function () {
+        $(this).attr('src', 'images/'+playerImgFiles[Math.floor(Math.random() * playerImgFiles.length)]);
     })
 });

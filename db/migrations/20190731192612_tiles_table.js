@@ -1,5 +1,5 @@
 exports.up = function (knex) {
-    return knex.schema.createTable('tiles', table => {
+    return knex.schema.createTable('tiles', (table) => {
         table.increments('id').primary();
         table.integer('position');
         table.string('type');

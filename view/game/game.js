@@ -70,7 +70,7 @@ const wsFunctions = {
 // EVENT LISTENERS
 function setUpEventListeners(ws) {
     // roll dice
-    $('.rollDice').on('click', async () => {
+    $('.rollDice').on('click', () => {
         const request = {
             function: 'doTurn'
         }
@@ -79,21 +79,21 @@ function setUpEventListeners(ws) {
     });
 
     // bid 
-    $(".bid").on("click", async () => {
-        // TODO: need to define function "bid" in player.js
-        console.log("Will call ws.send('bid')");
+    $('.bid').on('click', () => {
+        // TODO: need to define function 'bid' in player.js
+        console.log('Will call ws.send(\'bid\')');
     })
 
     // buy 
-    $(".buy").on("click", async () => {
-        // TODO: need to define function "buy" in player.js
-        console.log("Will call ws.send('buy')");
+    $('.buy').on('click', () => {
+        // TODO: need to define function 'buy' in player.js
+        console.log('Will call ws.send(\'buy\')');
     })
 
     // trade 
-    $(".trade").on("click", async () => {
-        // TODO: need to define function "trade" in player.js
-        console.log("Will call ws.send('trade')");
+    $('.trade').on('click', () => {
+        // TODO: need to define function 'trade' in player.js
+        console.log('Will call ws.send(\'trade\')');
     })
 }
 

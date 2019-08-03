@@ -39,7 +39,7 @@ function rollDice() {
 function updatePlayerPos(player, rolls) {
     const dieSum = rolls.die1 + rolls.die2;
 
-    if (player.position + dieSum > 24) {
+    if (player.position + dieSum >= 24) {
         player.money += 200;
     }
 

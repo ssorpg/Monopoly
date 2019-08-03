@@ -28,7 +28,7 @@ module.exports = {
         const players = await getPlayers();
 
         let reNumber = 1;
-        players.forEach(async player => {
+        players.forEach(player => {
             player.player_number = reNumber;
             updatePlayer(player);
             reNumber++;

@@ -5,7 +5,7 @@ const knex = require('../../config/connection');
 
 // ROUTES
 module.exports = function (app) {
-    app.post('/api/players', async function (req, res) {
+    app.post('/api/players', async (req, res) => {
         try {
             const players = await knex('players').select('*');
 
