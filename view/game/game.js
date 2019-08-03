@@ -10,9 +10,9 @@ function setPlayerInfo(player) {
     playerInfo.empty();
 
     playerInfo
-        .append('<h3>Player ' + player.player_number + '</h3>')
-        .append('<h4>Name: ' + player.name + '</h4>')
-        .append('<h4>Money: ' + player.money + '</h3>');
+        .append('<h6><b>Player ' + player.player_number + '</b></h6>')
+        .append('<h6>Name: ' + player.name + '</h6>')
+        .append('<h6>Money: ' + player.money + '</h6>');
 }
 
 function setPlayerPosition(player) {
