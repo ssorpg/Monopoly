@@ -1,4 +1,4 @@
-// REQUIRES
+// DOTENV FOR DEBUG
 require('dotenv').config();
 
 
@@ -6,7 +6,7 @@ require('dotenv').config();
 // MODELS
 const knex = require('../config/connection');
 const playerModel = require('./player');
-const spaceModel = require('./space');
+const tileModel = require('./tile');
 
 
 
@@ -18,7 +18,7 @@ async function getGameState() {
 }
 
 function checkTurn(game_state, player) {
-    console.log(game_state);
+    // console.log(game_state);
 
     if (player.player_number !== game_state.current_player_turn && process.env.NODE_ENV) {
         return false;
@@ -36,23 +36,24 @@ function rollDice() {
     return rolls;
 }
 
-function updatePlayerPosition(player, rolls) {
+function updatePlayerPos(player, rolls) {
     const dieSum = rolls.die1 + rolls.die2;
-    
+
+    if (player.position + dieSum > 24) {
+        player.money += 200;
+    }
+
     player.position = (player.position + dieSum) % 24;
-
+    
     return player;
 }
 
-async function updatePlayerMoney(player) {
-    const curSpace = await spaceModel.getSpace(player.position);
-        
-    player.money += curSpace.money_gained;
-    player.money -= curSpace.money_lost;
+function updatePlayerMoney(player, curTile) {
+    player.money += curTile.money_gained;
+    player.money -= curTile.money_lost;
 
     return player;
 }
-
 
 async function updateCurPlayerTurn(game_state) {
     const players = await playerModel.getPlayers();
@@ -64,6 +65,14 @@ async function updateCurPlayerTurn(game_state) {
 
     game_state.current_player_turn = game_state.current_player_turn % numPlayers;
     game_state.current_player_turn++;
+
+    await knex('game_state').update(game_state);
+}
+
+async function checkGameInProgress(game_state) {
+    if (!game_state.in_progress && game_state.current_player_turn === 3) {
+        game_state.in_progress = true;
+    }
 
     await knex('game_state').update(game_state);
 }
@@ -83,18 +92,23 @@ module.exports = {
         }
 
         const rolls = rollDice();
+        player = updatePlayerPos(player, rolls);
 
-        player = updatePlayerPosition(player, rolls);
-        player = await updatePlayerMoney(player);
+        const curTile = await tileModel.getTile(player.position);
+        player = updatePlayerMoney(player, curTile);
 
         playerModel.updatePlayer(player);
-        await updateCurPlayerTurn(game_state);
+        updateCurPlayerTurn(game_state);
+        checkGameInProgress(game_state);
 
         return {
             function: 'setRoll',
             payload: {
                 player: player,
-                rolls: rolls
+                rolls: rolls,
+                tile: {
+                    description: curTile.description
+                }
             }
         };
     },

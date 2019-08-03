@@ -1,5 +1,6 @@
 // REQUIRES
 const path = require('path');
+const playerModel = require('../../models/player');
 
 
 
@@ -35,9 +36,23 @@ module.exports = function (app) {
         }
     });
 
-    app.get('/game', function (req, res) {
+    app.get('/game', async function (req, res) {
         try {
-            res.status(200).sendFile('view/game/game.html', { root: path.dirname('../') });
+            const players = await playerModel.getPlayers();
+
+            let isValid = false;
+
+            players.forEach(player => {
+                if (player.name === req.query.name && player.hash === req.query.hash) {
+                    res.status(200).sendFile('view/game/game.html', { root: path.dirname('../') });
+                    isValid = true;
+                    return;
+                }
+            });
+
+            if (!isValid) {
+                res.status(403).end();
+            }
         }
         catch (err) {
             res.status(500).end();

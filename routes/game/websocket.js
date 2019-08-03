@@ -24,6 +24,12 @@ function sendToClients(clients, response, exclude) {
 // ROUTES
 module.exports = function (wss) {
     wss.on('connection', async function (ws) {
+        const game_state = await gameModel.getGameState();
+
+        if (game_state.in_progress) {
+            ws.close();
+        }
+
         console.log('\nPlayer connected');
         const players = await playerModel.getPlayers();
 
@@ -44,7 +50,7 @@ module.exports = function (wss) {
         };
         sendToClients(wss.clients, response, ws);
 
-        await playerModel.updatePlayer(newPlayer);
+        playerModel.updatePlayer(newPlayer);
 
         ws.on('message', async function (message) {
             console.log('\nMessage: ' + message);
