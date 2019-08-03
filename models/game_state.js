@@ -78,7 +78,7 @@ async function checkGameInProgress(game_state) {
 }
 
 async function checkLosers() {
-    losers = await knex("players").select("*").where("money", "<=", 0);
+    let losers = await knex("players").select("*").where("money", "<=", 0);
     return {
         function: "checkLosers",
         payload : {
