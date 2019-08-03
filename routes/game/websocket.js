@@ -11,7 +11,7 @@ function sendToClient(client, response) {
 
 function sendToClients(clients, response, exclude) {
     clients.forEach(client => {
-        if (client === exclude) {
+        if (client.player === exclude.player) {
             return;
         }
 
@@ -19,11 +19,19 @@ function sendToClients(clients, response, exclude) {
     });
 }
 
+function reNumberWSClients(clients, players) {
+    clients.forEach((client) => { // Don't really like this function but can't think of a better way to work with sets
+        client.player.player_number = players.filter((player) => { return client.player.name === player.name; })[0].player_number;
+    });
+
+    return clients;
+}
+
 
 
 // ROUTES
 module.exports = function (wss) {
-    wss.on('connection', async (ws) => {
+    wss.on('connection', async ws => {
         const game_state = await gameModel.getGameState();
 
         if (game_state.in_progress) {
@@ -33,9 +41,9 @@ module.exports = function (wss) {
         console.log('\nPlayer connected');
         const players = await playerModel.getPlayers();
 
-        const newPlayer = players[0];
+        const newPlayer = players[players.length - 1]; // Last player
 
-        newPlayer.player_number = players.length || 1;
+        newPlayer.player_number = players.length || 1; // In case there are no other players
         ws.player = newPlayer;
 
         let response = {
@@ -52,11 +60,10 @@ module.exports = function (wss) {
 
         playerModel.updatePlayer(newPlayer);
 
-        ws.on('message', async (data) => {
+        ws.on('message', async data => {
             console.log('\nMessage: ' + data);
 
             data = JSON.parse(data);
-            // console.log(data);
 
             const responseGame = await gameModel[data.function](ws.player);
             sendToClients(wss.clients, responseGame);
@@ -64,18 +71,41 @@ module.exports = function (wss) {
             // see if any one lose
             const responseLosers = await gameModel.checkLosers();
             if (0 !== responseLosers.payload.losers.length) {
-                // send back losers' list if someone loses
+                // delete losers in db
+                responseLosers.payload.losers.forEach(async (thisLoser) => {
+                    await playerModel.deletePlayer(thisLoser);
+                });
+                // send back losers' list and survivors' list if someone loses
                 sendToClients(wss.clients, responseLosers);
             }
         });
 
         ws.on('close', async () => {
-            const response = await playerModel.deletePlayer(ws.player);
-            let game_state = await gameModel.getGameState();
-            game_state.current_player_turn++;
+            let players = await playerModel.getPlayers();
+            const game_state = await gameModel.getGameState();
 
-            await gameModel.updateCurPlayerTurn(game_state);
+            if (ws.player.player_number === game_state.current_player_turn) { // If it was their turn...
+                if (ws.player.player_number === players.length) {  // And they were in last position...
+                    await gameModel.updateCurPlayerTurn(game_state, players); // Player 1 gets to go
+                }
+            }
+            else { // If it wasn't their turn...
+                if (ws.player.player_number < game_state.current_player_turn) { // And they go before the person whose turn it is...
+                    game_state.current_player_turn -= 2; // -1 for upCurPlayerTurn++ and -1 for reNumbering players
+                    await gameModel.updateCurPlayerTurn(game_state, players);
+                }
+            }
 
+            players = await playerModel.deletePlayer(ws.player);
+            wss.clients = reNumberWSClients(wss.clients, players);
+
+            console.log('');
+            console.log(game_state);
+
+            const response = {
+                function: 'setPlayers',
+                payload: players
+            };
             sendToClients(wss.clients, response);
 
             console.log('\nPlayer disconnected');

@@ -4,9 +4,11 @@ exports.up = function (knex) {
         table.integer('position');
         table.string('type');
         table.integer('money_lost');
-        table.integer('money_gained');
         table.integer('property_cost');
+        table.string('name');
         table.string('description');
+        table.string('owner')
+            .references('players.name');
     });
 };
 

@@ -1,15 +1,25 @@
-// MODELS
+// REQUIRES
 const knex = require('../config/connection');
 
 
 
 // FUNCTIONS
 async function getPlayers() {
-    return await knex('players').select('*').orderBy('id', 'desc');
+    return await knex('players').select('*').orderBy('id');
+}
+
+async function getPlayer(name) {
+    const [player] = await knex('players').select('*').where('name', name);
+
+    return player;
 }
 
 async function updatePlayer(player) {
-    await knex('players').update(player).where('name', '=', player.name);
+    await knex('players').update(player).where('name', player.name);
+}
+
+async function insertPlayer(player) {
+    await knex('players').insert(player);
 }
 
 
@@ -17,9 +27,10 @@ async function updatePlayer(player) {
 // EXPORTS
 module.exports = {
     getPlayers: getPlayers,
-
+    getPlayer: getPlayer,
     updatePlayer: updatePlayer,
-    
+    insertPlayer: insertPlayer,
+
     deletePlayer: async function (player) {
         if (player) {
             await knex('players').where('name', player.name).del();
@@ -34,9 +45,6 @@ module.exports = {
             reNumber++;
         });
 
-        return {
-            function: 'setPlayers',
-            payload: players
-        };
+        return players;
     }
 };
