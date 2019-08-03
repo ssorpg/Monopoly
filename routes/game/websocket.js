@@ -58,8 +58,15 @@ module.exports = function (wss) {
             const data = JSON.parse(message);
             // console.log(data);
 
-            const response = await gameModel[data.function](ws.player);
-            sendToClients(wss.clients, response);
+            const responseGame = await gameModel[data.function](ws.player);
+            sendToClients(wss.clients, responseGame);
+
+            // see if any one lose
+            const responseLosers = await gameModel.checkLosers();
+            if (0 !== responseLosers.payload.losers.length) {
+                // send back losers' list if someone loses
+                sendToClients(wss.clients, responseLosers);
+            }
         });
 
         ws.on('close', async () => {

@@ -62,7 +62,16 @@ const wsFunctions = {
         setTileDescription(payload.tile.description);
     },
 
-    wait: function() {} // So we don't get console errors when server returns nothing
+    wait: function() {}, // So we don't get console errors when server returns nothing
+
+    checkLosers : function(payload) {   //TODO: get rid of losers in game
+        let losers = payload.losers;
+        // TODO
+        // 1. Remove the losers on the player list
+        // 2. If this player is a loser. Show a message like "YOU LOSE"
+        // 3. The player is allowed to stay in game to watch it, but it can't send any messages
+        console.log(losers);
+    }
 };
 
 
