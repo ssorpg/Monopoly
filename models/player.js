@@ -22,7 +22,7 @@ module.exports = {
     
     deletePlayer: async function (player) {
         if (player) {
-            knex('players').where('name', '=', player.name).del();
+            await knex('players').where('name', player.name).del();
         }
 
         const players = await getPlayers();

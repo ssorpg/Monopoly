@@ -10,9 +10,9 @@ function setPlayerInfo(player) {
     playerInfo.empty();
 
     playerInfo
-        .append('<h3>Player ' + player.player_number + '</h3>')
-        .append('<h4>Name: ' + player.name + '</h4>')
-        .append('<h4>Money: ' + player.money + '</h3>');
+        .append('<h6><b>Player ' + player.player_number + '</b></h6>')
+        .append('<h6>Name: ' + player.name + '</h6>')
+        .append('<h6>Money: ' + player.money + '</h6>');
 }
 
 function setPlayerPosition(player) {
@@ -62,7 +62,16 @@ const wsFunctions = {
         setTileDescription(payload.tile.description);
     },
 
-    wait: function() {} // So we don't get console errors when server returns nothing
+    wait: function() {}, // So we don't get console errors when server returns nothing
+
+    checkLosers : function(payload) {   //TODO: get rid of losers in game
+        let losers = payload.losers;
+        // TODO
+        // 1. Remove the losers on the player list
+        // 2. If this player is a loser. Show a message like "YOU LOSE"
+        // 3. The player is allowed to stay in game to watch it, but it can't send any messages
+        console.log(losers);
+    }
 };
 
 
