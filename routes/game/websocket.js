@@ -64,7 +64,11 @@ module.exports = function (wss) {
             // see if any one lose
             const responseLosers = await gameModel.checkLosers();
             if (0 !== responseLosers.payload.losers.length) {
-                // send back losers' list if someone loses
+                // delete losers in db
+                responseLosers.payload.losers.forEach(async (thisLoser) => {
+                    await playerModel.deletePlayer(thisLoser);
+                });
+                // send back losers' list and survivors' list if someone loses
                 sendToClients(wss.clients, responseLosers);
             }
         });

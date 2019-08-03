@@ -66,10 +66,26 @@ const wsFunctions = {
 
     checkLosers : function(payload) {   //TODO: get rid of losers in game
         let losers = payload.losers;
+        let survivors = payload.survivors;
         // TODO
-        // 1. Remove the losers on the player list
+        // 1. Remove the losers on the player list (done)
         // 2. If this player is a loser. Show a message like "YOU LOSE"
-        // 3. The player is allowed to stay in game to watch it, but it can't send any messages
+        // 3. The player is allowed to stay in game to watch it, but it can't send any messages (done)
+        
+        // Remove all the losers, leave only survivors
+        this.setPlayers(survivors);
+
+        // Check if this player is a loser
+        losers.forEach(loser => {
+            if (loser.name === window.localStorage.getItem("playerName")) {
+
+                // Set this player status as "LOSE". Then this player can't send any messages
+                // to the server
+                window.localStorage.setItem("playerStatus", "LOSE");
+
+                // TODO: toggle a message to this player saying "YOU LOSE"
+            }
+        });
         console.log(losers);
     }
 };
@@ -80,29 +96,37 @@ const wsFunctions = {
 function setUpEventListeners(ws) {
     // roll dice
     $('.rollDice').on('click', async () => {
-        const request = {
-            function: 'doTurn'
+        if ("PLAYING" === window.localStorage.getItem("playerStatus")) {
+            const request = {
+                function: 'doTurn'
+            }
+    
+            ws.send(JSON.stringify(request));
         }
-
-        ws.send(JSON.stringify(request));
     });
 
     // bid 
     $(".bid").on("click", async () => {
         // TODO: need to define function "bid" in player.js
-        console.log("Will call ws.send('bid')");
+        if ("PLAYING" === window.localStorage.getItem("playerStatus")) {
+            console.log("Will call ws.send('bid')");
+        }
     })
 
     // buy 
     $(".buy").on("click", async () => {
         // TODO: need to define function "buy" in player.js
-        console.log("Will call ws.send('buy')");
+        if ("PLAYING" === window.localStorage.getItem("playerStatus")) {
+            console.log("Will call ws.send('buy')");
+        }
     })
 
     // trade 
     $(".trade").on("click", async () => {
         // TODO: need to define function "trade" in player.js
-        console.log("Will call ws.send('trade')");
+        if ("PLAYING" === window.localStorage.getItem("playerStatus")) {
+            console.log("Will call ws.send('trade')");
+        }
     })
 }
 
