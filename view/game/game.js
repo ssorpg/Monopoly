@@ -129,10 +129,10 @@ const wsFunctions = {
     checkLosers: function (payload) { //TODO: get rid of losers in game
         let losers = payload.losers;
         let survivors = payload.survivors;
-        // TODO
-        // 1. Remove the losers on the player list (done)
-        // 2. If this player is a loser. Show a message like 'YOU LOSE'
-        // 3. The player is allowed to stay in game to watch it, but it can't send any messages (done)
+
+        // 1. Remove the losers in player info box
+        // 2. Send an alert to everyone showing who loses
+        // 3. The player is allowed to stay in game to watch it, but it can't send any messages 
 
         // Remove all the losers, leave only survivors
         losers.forEach(loser => {
