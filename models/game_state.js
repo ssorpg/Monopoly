@@ -66,9 +66,9 @@ function newPlayerPos(player, rolls) {
 }
 
 async function nextPlayerTurn(game_state, players) {
-    if (!process.env.NODE_ENV) {
-        return game_state;
-    }
+    // if (!process.env.NODE_ENV) {
+    //     return game_state.current_player_turn;
+    // }
 
     players = players || await playerModel.getPlayers(); // If players provided, no need to spend time getting from DB
     let numPlayers = players.length;
@@ -128,18 +128,21 @@ async function passProperty () {
 async function hasTileOwner(player, curTile) {
     let tileOwner = curTile.owner;
 
-    if (curTile.owner === player) {
+    if (tileOwner === player.name) {
         return player;
     }
 
-    tileOwner = await playerModel.getPlayer(curTile.owner);
+    const moneyExchanged = curTile.property_cost / 2;
 
-    player.money -= curTile.property_cost / 2;
-    tileOwner.money += curTile.property_cost / 2;
+    tileOwner = await playerModel.getPlayer(tileOwner);
 
-    playerModel.updatePlayer(tileOwner);
+    player.money -= moneyExchanged;
+    tileOwner.money += moneyExchanged;
 
-    return player;
+    await playerModel.updatePlayer(tileOwner);
+    await playerModel.updatePlayer(player);
+
+    return player.name + ' paid $' + moneyExchanged + ' in rent to ' + tileOwner.name + '.';
 }
 
 
@@ -196,7 +199,7 @@ module.exports = {
         let playerInstructions = curTile.description;
 
         if (curTile.owner) {
-            player = await hasTileOwner(player, curTile);
+            playerInstructions = await hasTileOwner(player, curTile);
             game_state = await nextPlayerTurn(game_state);
         }
         else if (curTile.type === 'property' && player.money >= curTile.property_cost) {
