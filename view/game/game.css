@@ -91,23 +91,13 @@ body {
   border: solid black 1px;
 }
 
-/* score board */
-#scoreBoard {
-  position: absolute;
-  bottom: 450px;
-  left: 300px;
-  width: 100px;
-  height: 300px;
-  border: dashed lightskyblue 4px;
-}
-
 /* dice */
 #dice {
   position: absolute;
   width: 100px;
   height: 100px;
-  left: 50px;
-  bottom: 50px;
+  left: 350px;
+  bottom: 450px;
   border: solid lightcoral 3px;
 }
 

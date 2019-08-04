@@ -4,6 +4,21 @@ function setPlayer(player) {
     setPlayerPosition(player);
 }
 
+function removePlayer(player) {
+    removePlayerInfo(player);
+    removePlayerPosition(player);
+}
+
+function removePlayerInfo(player) {
+    let playerInfo = $('.player' + player.player_number + 'Info');
+
+    playerInfo.empty();
+}
+
+function removePlayerPosition(player) {
+    $('.player' + + player.player_number + 'Pos').remove();
+}
+
 function setPlayers(payload) {
     payload.players.forEach(player => {
         setPlayer(player);
@@ -105,7 +120,9 @@ const wsFunctions = {
         // 3. The player is allowed to stay in game to watch it, but it can't send any messages (done)
 
         // Remove all the losers, leave only survivors
-        this.setPlayers(survivors);
+        losers.forEach(loser => {
+            removePlayer(loser);
+        })
 
         // Check if this player is a loser
         losers.forEach(loser => {
@@ -115,7 +132,8 @@ const wsFunctions = {
                 // to the server
                 window.localStorage.setItem('playerStatus', 'LOSE');
 
-                // TODO: toggle a message to this player saying 'YOU LOSE'
+                // Toggle a message saying the player loses
+                alert(loser.name + " LOSE!!!")
             }
         });
         console.log(losers);
