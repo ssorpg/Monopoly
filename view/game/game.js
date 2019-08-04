@@ -25,6 +25,7 @@ function setPlayers(payload) {
     });
 
     setInstructions(payload.playerInstructions);
+    resetError();
 }
 
 function setPlayerInfo(player) {
@@ -79,6 +80,10 @@ function setRolls(rolls) {
     const newImg2 = $('<img>').attr('src', imgPath + imgNames[rolls.die2 - 1]);
 
     $('.diceImages').append(newImg, newImg2);
+}
+
+function resetError() {
+    $('.error').text('');
 }
 
 
@@ -143,11 +148,10 @@ const wsFunctions = {
         $('.error').text(payload.text);
     },
 
-    messageError: function (payload) {
-        $('.messageError').text(payload.text);
-    },
-
-    wait: function () { }
+    propertyPassed: function (payload) {
+        setInstructions(payload.playerInstructions);
+        resetError();
+    }
 };
 
 
@@ -162,6 +166,21 @@ function setUpEventListeners(ws) {
             }
 
             ws.send(JSON.stringify(request));
+            $('.error').text('');
+        }
+    });
+
+
+    // buy 
+    $('.buy').on('click', async () => {
+        // TODO: need to define function 'buy' in player.js
+        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+            const request = {
+                function: 'purchaseProperty'
+            }
+
+            ws.send(JSON.stringify(request));
+            $('.error').text('');
         }
     });
 
@@ -174,28 +193,17 @@ function setUpEventListeners(ws) {
             }
 
             ws.send(JSON.stringify(request));
+            $('.error').text('');
         }
-    })
+    });
 
-    // buy 
-    $('.buy').on('click', async () => {
-        // TODO: need to define function 'buy' in player.js
+    // sell 
+    $('.sell').on('click', async () => {
+        // TODO: need to define function 'sell' in player.js
         if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
-            const request = {
-                function: 'purchaseProperty'
-            }
-
-            ws.send(JSON.stringify(request));
+            console.log("Will call ws.send('sell')");
         }
-    })
-
-    // trade 
-    $('.trade').on('click', async () => {
-        // TODO: need to define function 'trade' in player.js
-        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
-            console.log("Will call ws.send('trade')");
-        }
-    })
+    });
 }
 
 

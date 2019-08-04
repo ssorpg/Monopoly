@@ -11,64 +11,90 @@
     <link rel="stylesheet" type="text/css" href="game.css">
 
 </head>
-<header>
-</header>
 
 <body>
-
     <div id="gameFrame">
         <table id="board">
             <tr class="top-row">
-
-                <td class="cell-board-corner" id="cell12">!!!FREE <br /> PARKING!!!</td>
-                <td class="cell-board-top" id="cell13">Progess <br /> Park<p class="cell13Owner"></p></td>
-                <td class="cell-board-top" id="cell14">George Street<p class="cell14Owner"></p></td>
-                <td class="cell-board-top" id="cell15">Improvement <br /> Tax</td>
-                <td class="cell-board-top" id="cell16">Johnson <br /> Road<p class="cell16Owner"></p></td>
-                <td class="cell-board-top" id="cell17">Fels <br /> Avenue<p class="cell17Owner"></p></td>
-                <td class="cell-board-corner" id="cell18">JAIL!</td>
+                <td class="cell-board-corner" id="cell12"></td>
+                <td class="cell-board-top" id="cell13">
+                    <p class="cell13Owner"></p>
+                </td>
+                <td class="cell-board-top" id="cell14">
+                    <p class="cell14Owner"></p>
+                </td>
+                <td class="cell-board-top" id="cell15"></td>
+                <td class="cell-board-top" id="cell16">
+                    <p class="cell16Owner"></p>
+                </td>
+                <td class="cell-board-top" id="cell17">
+                    <p class="cell17Owner"></p>
+                </td>
+                <td class="cell-board-corner" id="cell18"></td>
             </tr>
             <tr>
-                <td class="cell-board-left" id="cell11">The Bowery<p class="cell11Owner"></p></td>
+                <td class="cell-board-left" id="cell11">
+                    <p class="cell11Owner"></p>
+                </td>
                 <td colspan="5" class="board-center"></td>
-                <td class="cell-board-right" id="cell19">Broadway<p class="cell19Owner"></p></td>
+                <td class="cell-board-right" id="cell19">
+                    <p class="cell19Owner"></p>
+                </td>
             </tr>
             <tr>
-                <td class="cell-board-left" id="cell10">Hell's <br /> Half <br /> Acre<p class="cell10Owner"></p></td>
+                <td class="cell-board-left" id="cell10">
+                    <p class="cell10Owner"></p>
+                </td>
                 <td colspan="5" class="board-center"></td>
-                <td class="cell-board-right" id="cell20">Fifth Avenue<p class="cell20Owner"></p></td>
+                <td class="cell-board-right" id="cell20">
+                    <p class="cell20Owner"></p>
+                </td>
             </tr>
             <tr>
-                <td class="cell-board-left" id="cell9">Land Taxes</td>
+                <td class="cell-board-left" id="cell9"></td>
                 <td colspan="5" class="board-center"></td>
-                <td class="cell-board-right" id="cell21">Some Sorta Tax</td>
+                <td class="cell-board-right" id="cell21"></td>
             </tr>
             <tr>
-                <td class="cell-board-left" id="cell8">Goat <br /> Alley<p class="cell8Owner"></p></td>
+                <td class="cell-board-left" id="cell8">
+                    <p class="cell8Owner"></p>
+                </td>
                 <td colspan="5" class="board-center"></td>
-                <td class="cell-board-right" id="cell22">Lake <br /> Shore <br /> Drive<p class="cell22Owner"></p></td>
+                <td class="cell-board-right" id="cell22">
+                    <p class="cell22Owner"></p>
+                </td>
             </tr>
             <tr>
-                <td class="cell-board-left" id="cell7">Poverty Place<p class="cell7Owner"></p></td>
+                <td class="cell-board-left" id="cell7">
+                    <p class="cell7Owner"></p>
+                </td>
                 <td colspan="5" class="board-center"></td>
-                <td class="cell-board-right" id="cell23">Easy Street<p class="cell23Owner"></p></td>
+                <td class="cell-board-right" id="cell23">
+                    <p class="cell23Owner"></p>
+                </td>
             </tr>
             <tr class="bottom-row">
-                <td class="cell-board-corner" id="cell6">Lord <br /> BlueBlood's Estate <br /> Goto Jail</td>
-                <td class="cell-board-bottom" id="cell5">Boomtown<p class="cell5Owner"></p></td>
-                <td class="cell-board-bottom" id="cell4">Jaytown<p class="cell4Owner"></p></td>
-                <td class="cell-board-bottom" id="cell3">Personal <br /> Property Tax</td>
-                <td class="cell-board-bottom" id="cell2">Lonely <br /> Lane<p class="cell2Owner"></p></td>
-                <td class="cell-board-bottom" id="cell1">Wayback</td>
-                <td class="cell-board-corner" id="cell0">START <br /> GO!</td>
-
+                <td class="cell-board-corner" id="cell6"></td>
+                <td class="cell-board-bottom" id="cell5">
+                    <p class="cell5Owner"></p>
+                </td>
+                <td class="cell-board-bottom" id="cell4">
+                    <p class="cell4Owner"></p>
+                </td>
+                <td class="cell-board-bottom" id="cell3"></td>
+                <td class="cell-board-bottom" id="cell2">
+                    <p class="cell2Owner"></p>
+                </td>
+                <td class="cell-board-bottom" id="cell1"></td>
+                <td class="cell-board-corner" id="cell0"></td>
             </tr>
         </table>
+
         <div id="dice">
             <button class="rollDice">Roll</button>
             <p class="diceImages"></p>
-            <div class="error"></div>
         </div>
+
         <div id="playerInfo">
             <p class="player1Info">
             </p>
@@ -79,18 +105,19 @@
             <p class="player4Info">
             </p>
         </div>
+
         <div id="control">
             <div id="buttons">
-                <button class="pass">Pass</button>
                 <button class="buy">Buy</button>
+                <button class="pass">Pass</button>
                 <button class="trade">Trade</button>
             </div>
-            <div id="message">
-                message
-                <div class="messageError"></div>
-            </div>
+            <div id="message"></div>
+            <div class="error"></div>
         </div>
     </div>
+
+    <div class="widthInfo">This game is best viewed on a screen at least 750 pixels wide and 750 pixels tall.</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
     <script src="game.js"></script>

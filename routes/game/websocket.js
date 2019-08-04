@@ -66,7 +66,13 @@ module.exports = function (wss) {
             data = JSON.parse(data);
 
             const responseGame = await gameModel[data.function](ws.player);
-            sendToClients(wss.clients, responseGame);
+
+            if (responseGame.function === 'error') {
+                sendToClient(ws, responseGame);
+            }
+            else {
+                sendToClients(wss.clients, responseGame);
+            }
 
             // see if any one lose
             const responseLosers = await gameModel.checkLosers();

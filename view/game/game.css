@@ -1,47 +1,31 @@
 /* body */
 body {
-  /* overflow: hidden; */
   font-family: 'Fredericka the Great', cursive;
-  /* color: burlywood; */
   background-image: url("../images/background-2.jpg");
   box-sizing: border-box;
-  text-transform: uppercase;
-  /* height: 100%; */
-}
-
-/*playerinput*/
-#player1input{
-  display: inline;
+  /* text-transform: uppercase; */
 }
 
 /* game frame */
 #gameFrame {
-  /* background-image: url("../images/background-2.jpg"); */
-  /* position: relative; */
-  /* width: 1440px; */
-  /* height: 800px; */
+  position: relative;
   height: 100%;
-  outline: dashed rgba(135, 206, 250, 0.724) 10px;
-  outline-offset: -15px;
-  /* margin-left: auto;
-  margin-right: auto;
-  margin-top: 30px; */
-  margin: 10px auto
+  /* outline: dashed rgba(135, 206, 250, 0.724) 10px;
+  outline-offset: -15px; */
+  margin: 10px 0;
 }
 
 #board {
   position: relative;
   width: 100%;
-  /* height: 600px; */
   border: dashed lightskyblue 5px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 30px;
+  margin-left: 0;
+  margin-right: 0;
+  /* margin-top: 30px; */
 }
 
 /* board cells */
 .cell {
-	position: relative;
 	top: 0px;
 	left: 0px;
 	padding: 0px;
@@ -63,9 +47,6 @@ body {
   height: 100px;
   border: solid black 1px;
 }
-/* #cell0 {
-  transform: rotateZ(-45deg); */
-/* } */
 
 .cell-board-top {
 	width: 100px;
@@ -96,13 +77,14 @@ body {
   position: absolute;
   width: 100px;
   height: 100px;
-  left: 350px;
-  bottom: 450px;
+  left: 16%;
+  bottom: 16%;
   border: solid lightcoral 3px;
 }
 
 .diceImages > img {
   width: 30px;
+  height: 30px;
 }
 
 /* players */
@@ -110,20 +92,26 @@ body {
   position: absolute;
   width: 200px;
   height: 450px;
-  margin-left: 1200px;
-  bottom: 330px;
+  bottom: 16%;
+  right: 16%;
   border: dashed lightskyblue 4px;
   background-color: rgba(255, 255, 255, 0.45);
 }
 
 #control {
-  position: relative;
+  position: absolute;
   width: 300px;
   height: 200px;
   margin-left: auto;  
   margin-right: auto;
-  bottom: 400px;
+  top: 24%;
+  right: 44%;
   border: dashed lightskyblue 4px;
+}
+
+.error {
+  position: absolute;
+  bottom: 0px;
 }
 
 /* Player colors */
@@ -135,15 +123,12 @@ body {
 .player1Pos {
   background-color: rgb(77, 166, 255);
 }
-
 .player2Pos {
   background-color: rgb(255, 77, 106);
 }
-
 .player3Pos {
   background-color: rgb(77, 255, 77);
 }
-
 .player4Pos {
   background-color: rgb(255, 166, 77);
 }
@@ -162,9 +147,13 @@ background-color: rgba(255, 228, 196, 0.45);
 #cell15,#cell21,#cell3,#cell9{
   background-color: rgba(216, 112, 147, 0.45)
 }
-@media only screen and (max-width: 600px), screen and (max-height: 700px) {
-  #gameFrame {
-   position: relative;
-    /* width: 100vw; */
+
+.widthInfo {
+  display: none;
+}
+
+@media only screen and (max-width: 750px), screen and (max-height: 750px) {
+  .widthInfo {
+    display: block;
   }
 }
