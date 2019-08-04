@@ -168,7 +168,6 @@ module.exports = {
             player.money -= curTile.money_lost;
             game_state = await nextPlayerTurn(game_state);
         }
-
         
         game_state = checkGameInProgress(game_state, player);
         updateGameState(game_state);
@@ -178,7 +177,8 @@ module.exports = {
             payload: {
                 players: await playerModel.getPlayers(),
                 rolls: rolls,
-                playerInstructions: playerInstructions
+                playerInstructions: playerInstructions,
+                currentPlayerTurn: game_state.current_player_turn
             }
         };
     },
@@ -215,7 +215,8 @@ module.exports = {
             payload: {
                 players: await playerModel.getPlayers(),
                 tileOwner: player,
-                playerInstructions: playerInstructions
+                playerInstructions: playerInstructions,
+                currentPlayerTurn: game_state.current_player_turn
             }
         };
     },
@@ -240,7 +241,8 @@ module.exports = {
         return {
             function: 'propertyPassed',
             payload: {
-                playerInstructions: player.name + ' decided not to purchase ' + curTile.name + '.'
+                playerInstructions: player.name + ' decided not to purchase ' + curTile.name + '.',
+                currentPlayerTurn: game_state.current_player_turn
             }
         };
     },

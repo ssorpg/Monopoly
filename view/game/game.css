@@ -98,6 +98,11 @@ body {
   background-color: rgba(255, 255, 255, 0.45);
 }
 
+.currentPlayerTurn {
+  position: absolute;
+  bottom: 0;
+}
+
 #control {
   position: absolute;
   width: 300px;
@@ -111,7 +116,7 @@ body {
 
 .error {
   position: absolute;
-  bottom: 0px;
+  bottom: 0;
 }
 
 /* Player colors */

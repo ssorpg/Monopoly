@@ -25,6 +25,7 @@ function setPlayers(payload) {
     });
 
     setInstructions(payload.playerInstructions);
+    setCurrentPlayerTurn(payload.currentPlayerTurn);
     resetError();
 }
 
@@ -84,6 +85,10 @@ function setRolls(rolls) {
 
 function resetError() {
     $('.error').text('');
+}
+
+function setCurrentPlayerTurn(currentPlayerTurn) {
+    $('.currentPlayerTurn').text('Current turn: player ' + currentPlayerTurn);
 }
 
 
@@ -150,6 +155,7 @@ const wsFunctions = {
 
     propertyPassed: function (payload) {
         setInstructions(payload.playerInstructions);
+        setCurrentPlayerTurn(payload.currentPlayerTurn)
         resetError();
     }
 };

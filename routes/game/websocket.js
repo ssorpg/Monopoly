@@ -55,7 +55,8 @@ module.exports = function (wss) {
             function: 'setBoard',
             payload: {
                 players: players,
-                tiles: tiles
+                tiles: tiles,
+                currentPlayerTurn: game_state.current_player_turn
             }
         };
         sendToClients(wss.clients, response);
