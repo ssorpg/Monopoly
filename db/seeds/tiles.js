@@ -88,7 +88,7 @@ exports.seed = function (knex) {
                 },
                 {
                     id: 22, position: 21, type: 'tax', money_lost: 250, property_cost: 0,
-                    name: 'Some Sorta Tax', description: 'Some sotra tax! Lose $250.', owner: ''
+                    name: 'Some Sorta Tax', description: 'Some sorta tax! Lose $250.', owner: ''
                 },
                 {
                     id: 23, position: 22, type: 'property', money_lost: 0, property_cost: 440,
