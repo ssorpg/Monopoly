@@ -58,7 +58,7 @@ function setUpTiles(tiles) {
         $('#cell' + tile.position)
             .html(tile.name)
 
-        if (tile.owner !== null) {
+        if (tile.owner) {
             const cellOwner = $('<p>')
                 .text('Owned by: ' + tile.owner)
                 .addClass('cell' + tile.position + 'Owner');
@@ -94,7 +94,7 @@ const wsFunctions = {
         setPlayers(payload);
     },
 
-    onNewPlayer: function (payload) {
+    setBoard: function (payload) {
         setUpTiles(payload.tiles);
         setPlayers(payload);
     },

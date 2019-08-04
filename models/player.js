@@ -8,8 +8,8 @@ async function getPlayers() {
     return await knex('players').select('*').orderBy('id');
 }
 
-async function getPlayer(name) {
-    const [player] = await knex('players').select('*').where('name', name);
+async function getPlayer(player) {
+    [player] = await knex('players').select('*').where('name', player.name);
 
     return player;
 }

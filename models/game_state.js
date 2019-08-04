@@ -19,7 +19,7 @@ async function getGameState() {
 }
 
 async function updateGameState(game_state) {
-    console.log(game_state);
+    // console.log(game_state);
     await knex('game_state').update(game_state).where('id', game_state.id);
 }
 
@@ -56,7 +56,7 @@ function rollDice() {
 function newPlayerPos(player, rolls) {
     const dieSum = rolls.die1 + rolls.die2;
 
-    if (player.position + dieSum >= 24) {
+    if (player.position + dieSum >= 24) { // Passed GO
         player.money += 200;
     }
 
@@ -83,14 +83,6 @@ async function nextPlayerTurn(game_state, players) {
     return game_state;
 }
 
-async function unlockGame(game_state) {
-    game_state = await nextPlayerTurn(game_state);
-    game_state.paused = false;
-    game_state = checkGameInProgress(game_state);
-
-    updateGameState(game_state);
-}
-
 function checkGameInProgress(game_state) {
     if (!game_state.in_progress && game_state.current_player_turn === 3) {
         game_state.in_progress = true;
@@ -99,50 +91,47 @@ function checkGameInProgress(game_state) {
     return game_state;
 }
 
+async function unlockGame(game_state) {
+    game_state = await nextPlayerTurn(game_state);
+    game_state.paused = false;
+    game_state = checkGameInProgress(game_state);
+
+    updateGameState(game_state);
+}
+
+async function hasTileOwner(player, curTile) {
+    let tileOwner = {
+        name: curTile.owner
+    };
+
+    if (tileOwner.name === player.name) {
+        return;
+    }
+
+    tileOwner = await playerModel.getPlayer(tileOwner);
+
+    const moneyExchanged = curTile.property_cost / 2;
+
+    player.money -= moneyExchanged;
+    tileOwner.money += moneyExchanged;
+
+    await playerModel.updatePlayer(player);
+    await playerModel.updatePlayer(tileOwner);
+
+    return player.name + ' paid $' + moneyExchanged + ' in rent to ' + tileOwner.name + '.';
+}
+
 async function checkLosers() {
     let losers = await knex('players').select('*').where('money', '<=', 0);
     let survivors = await knex('players').select('*').where('money', '>', 0);
 
     return {
         function: 'checkLosers',
-        payload : {
+        payload: {
             losers: losers,
-            survivors : survivors
+            survivors: survivors
         }
     };
-}
-
-async function passProperty () {
-    let game_state = await getGameState();
-
-    game_state = await nextPlayerTurn(game_state);
-    game_state.paused = false;
-
-    updateGameState(game_state);
-
-    return {
-        function: 'wait'
-    };
-}
-
-async function hasTileOwner(player, curTile) {
-    let tileOwner = curTile.owner;
-
-    if (tileOwner === player.name) {
-        return player;
-    }
-
-    const moneyExchanged = curTile.property_cost / 2;
-
-    tileOwner = await playerModel.getPlayer(tileOwner);
-
-    player.money -= moneyExchanged;
-    tileOwner.money += moneyExchanged;
-
-    await playerModel.updatePlayer(tileOwner);
-    await playerModel.updatePlayer(player);
-
-    return player.name + ' paid $' + moneyExchanged + ' in rent to ' + tileOwner.name + '.';
 }
 
 
@@ -153,7 +142,45 @@ module.exports = {
     updateGameState: updateGameState,
     nextPlayerTurn: nextPlayerTurn,
     checkLosers: checkLosers,
-    passProperty: passProperty,
+
+    doTurn: async function (player) {
+        let game_state = await getGameState();
+        const turnError = canDoTurn(game_state, player);
+
+        if (turnError) {
+            return { function: 'error', payload: { text: turnError } };
+        }
+
+        const rolls = rollDice();
+        player = newPlayerPos(player, rolls);
+
+        const curTile = await tileModel.getTile(player.position);
+        let playerInstructions = curTile.description;
+
+        if (curTile.owner) {
+            playerInstructions = await hasTileOwner(player, curTile) || '';
+            game_state = await nextPlayerTurn(game_state);
+        }
+        else if (curTile.type === 'property' && player.money >= curTile.property_cost) {
+            playerInstructions = 'Purchase ' + curTile.name + ' for $' + curTile.property_cost + '?';
+            game_state.paused = true; // Don't let the next person go if it's a property, we need to receive a response first
+        }
+        else {
+            player.money -= curTile.money_lost;
+            game_state = await nextPlayerTurn(game_state);
+        }
+
+        await playerModel.updatePlayer(player);
+
+        return {
+            function: 'doTurn',
+            payload: {
+                players: await playerModel.getPlayers(),
+                rolls: rolls,
+                playerInstructions: playerInstructions
+            }
+        };
+    },
 
     purchaseProperty: async function (player) {
         const game_state = await getGameState();
@@ -184,42 +211,37 @@ module.exports = {
         };
     },
 
-    doTurn: async function (player) {
+    passProperty: async function () {
         let game_state = await getGameState();
-        const turnError = canDoTurn(game_state, player);
-
-        if (turnError) {
-            return { function: 'error', payload: { text: turnError } };
-        }
-
-        const rolls = rollDice();
-        player = newPlayerPos(player, rolls);
-
-        const curTile = await tileModel.getTile(player.position);
-        let playerInstructions = curTile.description;
-
-        if (curTile.owner) {
-            playerInstructions = await hasTileOwner(player, curTile);
-            game_state = await nextPlayerTurn(game_state);
-        }
-        else if (curTile.type === 'property' && player.money >= curTile.property_cost) {
-            playerInstructions = 'Purchase ' + curTile.name + ' for $' + curTile.property_cost + '?';
-            game_state.paused = true; // Don't let the next person go if it's a property, we need to receive a response first
-        }
-        else {
-            player.money -= curTile.money_lost;
-            game_state = await nextPlayerTurn(game_state);
-        }
-
-        await playerModel.updatePlayer(player);
-
+    
+        game_state = await nextPlayerTurn(game_state);
+        game_state.paused = false;
+    
+        updateGameState(game_state);
+    
         return {
-            function: 'doTurn',
-            payload: {
-                players: await playerModel.getPlayers(),
-                rolls: rolls,
-                playerInstructions: playerInstructions
-            }
+            function: 'wait'
         };
+    },
+
+    checkTurnOnPlayerLeave: async function (player, players) {
+        const game_state = await getGameState();
+    
+        if (player.player_number === game_state.current_player_turn) { // If it was their turn...
+            if (player.player_number === players.length) {  // And they were in last position...
+                nextPlayerTurn(game_state, players); // Player 1 gets to go
+                updateGameState(game_state);
+            }
+        }
+        else { // If it wasn't their turn...
+            if (player.player_number < game_state.current_player_turn) { // And they go before the person whose turn it is...
+                game_state.current_player_turn -= 2; // -1 for upCurPlayerTurn++ and -1 for reNumbering players
+                nextPlayerTurn(game_state, players);
+                updateGameState(game_state);
+            }
+        }
+    
+        console.log('');
+        console.log(game_state);
     }
 };
