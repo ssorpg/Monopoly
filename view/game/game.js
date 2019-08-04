@@ -25,6 +25,8 @@ function setPlayers(payload) {
     });
 
     setInstructions(payload.playerInstructions);
+    setCurrentPlayerTurn(payload.currentPlayerTurn);
+    resetError();
 }
 
 function setPlayerInfo(player) {
@@ -35,7 +37,7 @@ function setPlayerInfo(player) {
     playerInfo
         .append('<h6><b>Player ' + player.player_number + '</b></h6>')
         .append('<h6>Name: ' + player.name + '</h6>')
-        .append('<h6>Money: ' + player.money + '</h6>');
+        .append('<h6>Money: $' + player.money + '</h6>');
 }
 
 function setPlayerPosition(player) {
@@ -58,7 +60,7 @@ function setUpTiles(tiles) {
         $('#cell' + tile.position)
             .html(tile.name)
 
-        if (tile.owner !== null) {
+        if (tile.owner) {
             const cellOwner = $('<p>')
                 .text('Owned by: ' + tile.owner)
                 .addClass('cell' + tile.position + 'Owner');
@@ -81,6 +83,14 @@ function setRolls(rolls) {
     $('.diceImages').append(newImg, newImg2);
 }
 
+function resetError() {
+    $('.error').text('');
+}
+
+function setCurrentPlayerTurn(currentPlayerTurn) {
+    $('.currentPlayerTurn').text('Current turn: player ' + currentPlayerTurn);
+}
+
 
 
 // WEBSOCKET FUNCTIONS
@@ -94,7 +104,7 @@ const wsFunctions = {
         setPlayers(payload);
     },
 
-    onNewPlayer: function (payload) {
+    setBoard: function (payload) {
         setUpTiles(payload.tiles);
         setPlayers(payload);
     },
@@ -143,11 +153,11 @@ const wsFunctions = {
         $('.error').text(payload.text);
     },
 
-    messageError: function (payload) {
-        $('.messageError').text(payload.text);
-    },
-
-    wait: function () { }
+    propertyPassed: function (payload) {
+        setInstructions(payload.playerInstructions);
+        setCurrentPlayerTurn(payload.currentPlayerTurn)
+        resetError();
+    }
 };
 
 
@@ -162,6 +172,21 @@ function setUpEventListeners(ws) {
             }
 
             ws.send(JSON.stringify(request));
+            $('.error').text('');
+        }
+    });
+
+
+    // buy 
+    $('.buy').on('click', async () => {
+        // TODO: need to define function 'buy' in player.js
+        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+            const request = {
+                function: 'purchaseProperty'
+            }
+
+            ws.send(JSON.stringify(request));
+            $('.error').text('');
         }
     });
 
@@ -174,28 +199,17 @@ function setUpEventListeners(ws) {
             }
 
             ws.send(JSON.stringify(request));
+            $('.error').text('');
         }
-    })
+    });
 
-    // buy 
-    $('.buy').on('click', async () => {
-        // TODO: need to define function 'buy' in player.js
+    // sell 
+    $('.sell').on('click', async () => {
+        // TODO: need to define function 'sell' in player.js
         if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
-            const request = {
-                function: 'purchaseProperty'
-            }
-
-            ws.send(JSON.stringify(request));
+            console.log("Will call ws.send('sell')");
         }
-    })
-
-    // trade 
-    $('.trade').on('click', async () => {
-        // TODO: need to define function 'trade' in player.js
-        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
-            console.log("Will call ws.send('trade')");
-        }
-    })
+    });
 }
 
 

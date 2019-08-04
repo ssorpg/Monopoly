@@ -44,21 +44,22 @@ module.exports = function (wss) {
 
         const newPlayer = players[players.length - 1]; // Last player
 
-        newPlayer.player_number = players.length || 1; // In case there are no other players
+        newPlayer.player_number = players.length;
         ws.player = newPlayer;
+
+        await playerModel.updatePlayer(newPlayer);
 
         const tiles = await tileModel.getTiles();
 
         const response = {
-            function: 'onNewPlayer',
+            function: 'setBoard',
             payload: {
                 players: players,
-                tiles: tiles
+                tiles: tiles,
+                currentPlayerTurn: game_state.current_player_turn
             }
         };
         sendToClients(wss.clients, response);
-
-        playerModel.updatePlayer(newPlayer);
 
         ws.on('message', async data => {
             console.log('\nMessage: ' + data);
@@ -66,7 +67,13 @@ module.exports = function (wss) {
             data = JSON.parse(data);
 
             const responseGame = await gameModel[data.function](ws.player);
-            sendToClients(wss.clients, responseGame);
+
+            if (responseGame.function === 'error') {
+                sendToClient(ws, responseGame);
+            }
+            else {
+                sendToClients(wss.clients, responseGame);
+            }
 
             // see if any one lose
             const responseLosers = await gameModel.checkLosers();
@@ -82,31 +89,20 @@ module.exports = function (wss) {
 
         ws.on('close', async () => {
             let players = await playerModel.getPlayers();
-            const game_state = await gameModel.getGameState();
 
-            if (ws.player.player_number === game_state.current_player_turn) { // If it was their turn...
-                if (ws.player.player_number === players.length) {  // And they were in last position...
-                    gameModel.newPlayerTurn(game_state, players); // Player 1 gets to go
-                    await gameModel.updateGameState(game_state);
-                }
-            }
-            else { // If it wasn't their turn...
-                if (ws.player.player_number < game_state.current_player_turn) { // And they go before the person whose turn it is...
-                    game_state.current_player_turn -= 2; // -1 for upCurPlayerTurn++ and -1 for reNumbering players
-                    gameModel.newPlayerTurn(game_state, players);
-                    await gameModel.updateGameState(game_state);
-                }
-            }
+            gameModel.checkTurnOnPlayerLeave(ws.player, players);
 
             players = await playerModel.deletePlayer(ws.player);
             wss.clients = reNumberWSClients(wss.clients, players);
 
-            console.log('');
-            console.log(game_state);
+            const tiles = await tileModel.getTiles();
 
             const response = {
-                function: 'setPlayers',
-                payload: players
+                function: 'setBoard',
+                payload: {
+                    players: players,
+                    tiles: tiles
+                }
             };
             sendToClients(wss.clients, response);
 
