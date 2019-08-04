@@ -135,17 +135,21 @@ const wsFunctions = {
         })
 
         // Check if this player is a loser
+        let loserMsg = "";
         losers.forEach(loser => {
-            if (loser.name === window.localStorage.getItem('playerName')) {
+            if (loser.name === sessionStorage.getItem('playerName')) {
 
                 // Set this player status as 'LOSE'. Then this player can't send any messages
                 // to the server
-                window.localStorage.setItem('playerStatus', 'LOSE');
-
-                // Toggle a message saying the player loses
-                alert(loser.name + " LOSE!!!")
+                sessionStorage.setItem('playerStatus', 'LOSE');
             }
+
+            // Build a message containing all losers' names
+            loserMsg += (loser.name + " LOSE!!!\n");
         });
+
+        // Toggle the message of losers to everyone
+        alert(loserMsg);
         console.log(losers);
     },
 
@@ -166,7 +170,7 @@ const wsFunctions = {
 function setUpEventListeners(ws) {
     // roll dice
     $('.rollDice').on('click', async () => {
-        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
             const request = {
                 function: 'doTurn'
             }
@@ -180,7 +184,7 @@ function setUpEventListeners(ws) {
     // buy 
     $('.buy').on('click', async () => {
         // TODO: need to define function 'buy' in player.js
-        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
             const request = {
                 function: 'purchaseProperty'
             }
@@ -193,7 +197,7 @@ function setUpEventListeners(ws) {
     // pass 
     $('.pass').on('click', async () => {
         // TODO: need to define function 'pass' in player.js
-        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
             const request = {
                 function: 'passProperty'
             }
@@ -206,7 +210,7 @@ function setUpEventListeners(ws) {
     // sell 
     $('.sell').on('click', async () => {
         // TODO: need to define function 'sell' in player.js
-        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
             console.log("Will call ws.send('sell')");
         }
     });
