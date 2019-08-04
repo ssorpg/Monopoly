@@ -34,9 +34,14 @@ function setPlayerInfo(player) {
 
     playerInfo.empty();
 
+    let playerNameExpr = player.name;
+    if (player.name === sessionStorage.getItem("playerName")) {
+        playerNameExpr += " (YOU)";
+    }
+
     playerInfo
-        .append('<h6><b>Player ' + player.player_number + '</b></h6>')
-        .append('<h6>Name: ' + player.name + '</h6>')
+        .append('<h6><b>Player ' + player.player_number + '</b><h6>')
+        .append('<h6>Name: ' + playerNameExpr + '</h6>')
         .append('<h6>Money: $' + player.money + '</h6>');
 }
 
