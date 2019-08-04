@@ -26,7 +26,7 @@ Put properties such as money held to users db
 Players can win/lose the game
 Board UI creation
 Players can roll and move around the board
-Random events and "when landed on" functions
+Random events and 'when landed on' functions
 Implement jail and get out of jail logic
 Basic properties that can be directly purchased
 Properties can be bid on

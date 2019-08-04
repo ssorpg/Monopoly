@@ -19,19 +19,29 @@ async function getGameState() {
 }
 
 async function updateGameState(game_state) {
-    await knex('game_state').update(game_state);
+    console.log(game_state);
+    await knex('game_state').update(game_state).where('id', game_state.id);
 }
 
-function checkTurn(game_state, player) {
-    // if (process.env.NODE_ENV) {
-    //     return false;
-    // }
-
+function isTurn(game_state, player) {
     if (player.player_number !== game_state.current_player_turn) {
-        return false;
+        return 'It\'s not your turn';
+    }
+}
+
+function canDoTurn(game_state, player) {
+    if (!process.env.NODE_ENV) {
+        return;
     }
 
-    return true;
+    const notTurn = isTurn(game_state, player);
+
+    if (notTurn) {
+        return notTurn;
+    }
+    else if (game_state.paused) {
+        return 'The game is currently paused.';
+    }
 }
 
 function rollDice() {
@@ -55,7 +65,11 @@ function newPlayerPos(player, rolls) {
     return player;
 }
 
-async function newPlayerTurn(game_state, players) {
+async function nextPlayerTurn(game_state, players) {
+    if (!process.env.NODE_ENV) {
+        return game_state;
+    }
+
     players = players || await playerModel.getPlayers(); // If players provided, no need to spend time getting from DB
     let numPlayers = players.length;
 
@@ -69,7 +83,15 @@ async function newPlayerTurn(game_state, players) {
     return game_state;
 }
 
-async function checkGameInProgress(game_state) {
+async function unlockGame(game_state) {
+    game_state = await nextPlayerTurn(game_state);
+    game_state.paused = false;
+    game_state = checkGameInProgress(game_state);
+
+    updateGameState(game_state);
+}
+
+function checkGameInProgress(game_state) {
     if (!game_state.in_progress && game_state.current_player_turn === 3) {
         game_state.in_progress = true;
     }
@@ -90,42 +112,69 @@ async function checkLosers() {
     };
 }
 
+async function passProperty () {
+    let game_state = await getGameState();
+
+    game_state = await nextPlayerTurn(game_state);
+    game_state.paused = false;
+
+    updateGameState(game_state);
+
+    return {
+        function: 'wait'
+    };
+}
+
+async function hasTileOwner(player, curTile) {
+    let tileOwner = curTile.owner;
+
+    if (curTile.owner === player) {
+        return player;
+    }
+
+    tileOwner = await playerModel.getPlayer(curTile.owner);
+
+    player.money -= curTile.property_cost / 2;
+    tileOwner.money += curTile.property_cost / 2;
+
+    playerModel.updatePlayer(tileOwner);
+
+    return player;
+}
+
 
 
 // EXPORTS
 module.exports = {
     getGameState: getGameState,
     updateGameState: updateGameState,
+    nextPlayerTurn: nextPlayerTurn,
     checkLosers: checkLosers,
+    passProperty: passProperty,
 
     purchaseProperty: async function (player) {
-        let game_state = await getGameState();
-        const isTurn = checkTurn(game_state, player);
-        const curTile = await tileModel.getTile(player.position);
+        const game_state = await getGameState();
+        const notTurn = isTurn(game_state, player);
 
-        if (!isTurn) {
-            return { function: 'error', payload: { text: 'It\'s not your turn.' } };
+        if (notTurn) {
+            return { function: 'error', payload: { text: notTurn } };
         }
-        else if (player.money < curTile.property_cost) {
-            return { function: 'messageError', payload: { text: 'The game is currently paused.' } };
-        }
+
+        const curTile = await tileModel.getTile(player.position);
 
         player.money -= curTile.property_cost;
         curTile.owner = player.name;
 
-        game_state = newPlayerTurn(game_state);
-        game_state.paused = false;
-
-        playerModel.updatePlayer(player);
+        await playerModel.updatePlayer(player);
         tileModel.updateTile(curTile);
-        updateGameState(game_state);
+        unlockGame(game_state);
 
-        const playerInstructions = player.name + ' purchased ' + curTile.name + ' for ' + curTile.property_cost + '.';
+        const playerInstructions = player.name + ' purchased ' + curTile.name + ' for $' + curTile.property_cost + '.';
 
         return {
             function: 'propertyPurchased',
             payload: {
-                player: player,
+                players: await playerModel.getPlayers(),
                 tileOwner: player,
                 playerInstructions: playerInstructions
             }
@@ -134,13 +183,10 @@ module.exports = {
 
     doTurn: async function (player) {
         let game_state = await getGameState();
-        const isTurn = checkTurn(game_state, player);
+        const turnError = canDoTurn(game_state, player);
 
-        if (!isTurn) {
-            return { function: 'error', payload: { text: 'It\'s not your turn.' } };
-        }
-        else if (game_state.paused) {
-            return { function: 'error', payload: { text: 'The game is currently paused.' } };
+        if (turnError) {
+            return { function: 'error', payload: { text: turnError } };
         }
 
         const rolls = rollDice();
@@ -148,35 +194,29 @@ module.exports = {
 
         const curTile = await tileModel.getTile(player.position);
         let playerInstructions = curTile.description;
-        let tileOwner = await playerModel.getPlayer(curTile.owner);
 
-        if (tileOwner) {
-            player.money -= curTile.property_cost / 2;
-            tileOwner.money += curTile.property_cost / 2;
-
-            playerModel.updatePlayer(tileOwner);
+        if (curTile.owner) {
+            player = await hasTileOwner(player, curTile);
+            game_state = await nextPlayerTurn(game_state);
         }
-        else if (curTile.type === 'property') {
-            playerInstructions = tileModel.askToBuy(curTile);
+        else if (curTile.type === 'property' && player.money >= curTile.property_cost) {
+            playerInstructions = 'Purchase ' + curTile.name + ' for $' + curTile.property_cost + '?';
             game_state.paused = true; // Don't let the next person go if it's a property, we need to receive a response first
         }
         else {
             player.money -= curTile.money_lost;
-            game_state = newPlayerTurn(game_state);
+            game_state = await nextPlayerTurn(game_state);
         }
 
-        playerModel.updatePlayer(player);
-        game_state = checkGameInProgress(game_state); // This is checked in api routes so players won't be able to login
-        updateGameState(game_state);
+        await playerModel.updatePlayer(player);
 
         return {
-            function: 'setRoll',
+            function: 'doTurn',
             payload: {
-                player: player,
-                tileOwner: tileOwner,
+                players: await playerModel.getPlayers(),
                 rolls: rolls,
                 playerInstructions: playerInstructions
             }
         };
-    },
+    }
 };
