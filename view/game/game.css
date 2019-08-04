@@ -1,4 +1,5 @@
 /* body */
+
 body {
   /* overflow: hidden; */
   font-family: 'Fredericka the Great', cursive;
@@ -10,11 +11,13 @@ body {
 }
 
 /*playerinput*/
-#player1input{
+
+#player1input {
   display: inline;
 }
 
 /* game frame */
+
 #gameFrame {
   /* background-image: url("../images/background-2.jpg"); */
   /* position: relative; */
@@ -30,28 +33,29 @@ body {
 }
 
 #board {
-  display: grid; 
-  grid-template-columns: repeat(5, 2fr); 
-  grid-auto-rows: 100%; 
-  /* position: relative;
-  width: 100%;
-   height: 600px;  */
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 130px;
+   /* position: relative; */
+  width: 80vw;
+   /* height: 600px;  */ 
   border: dashed rgba(105, 2, 2, 0.299) 12px;
   border-radius: 13px;
-  /* margin-left: auto;
+  margin-left: auto;
   margin-right: auto;
-  margin-top: 30px; */
+  margin-top: 10px;
 }
 
 /* board cells */
+
 .cell {
-	position: relative;
-	top: 0px;
-	left: 0px;
-	padding: 0px;
-	vertical-align: bottom;
-	background-repeat: no-repeat;
-	background-size: auto 40px;
+  position: relative;
+  top: 0px;
+  left: 0px;
+  padding: 0px;
+  vertical-align: bottom;
+  background-repeat: no-repeat;
+  background-size: auto 40px;
 }
 
 /* .board-center {
@@ -63,43 +67,42 @@ body {
 } */
 
 .cell-board-corner {
-  
-   
-  
-	width: 100px;
-  height: 100px;
+  width: 140px;
+  height: 140px;
   border: solid black 3px;
 }
-#cell0 {
-  grid-column-start: 1; 
-  grid-column-end: 1; 
-  grid-row-start: 1; 
-  grid-row-end: 1; 
-  transform: rotateZ(-45deg); 
+
+#free {
+  /* grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 1;
+  grid-row-end: 1; */
+  text-align: left;
+  transform: rotateZ(-45deg);
 }
 
 .cell-board-top {
-	width: 100px;
-  height: auto;
+  width: 100px;
+  height: 90%;
   border: dotted rgb(255, 0, 221) 1px;
 }
 
 .cell-board-bottom {
-  float: bottom;
-	width: 100px;
+  /* float: bottom; */
+  width: 100px;
   height: auto;
   border: dotted rgb(255, 0, 221) 1px;
 }
 
 .cell-board-left {
-	width: auto;
+  width: 90%;
   height: 100px;
   border: dotted rgb(255, 0, 221) 1px;
 }
 
 .cell-board-right {
   width: auto;
-  height: 100px;
+  height: auto;
   border: dotted rgb(255, 0, 221) 1px;
 }
 
@@ -128,11 +131,12 @@ body {
   border: solid lightcoral 3px;
 }
 
-.diceImages > img {
+.diceImages>img {
   width: 30px;
 }
 
 /* players */
+
 #playerInfo {
   position: absolute;
   width: 200px;
@@ -147,13 +151,14 @@ body {
   /* position: ; */
   width: 300px;
   height: 200px;
-  margin-left: auto;  
+  margin-left: auto;
   margin-right: auto;
   bottom: 400px;
   border: dashed rgba(22, 59, 83, 0.621) 4px;
 }
 
 /* Player colors */
+
 .positionMarker {
   width: 30px;
   height: 30px;
@@ -176,30 +181,34 @@ body {
 }
 
 /* Square background colors */
-.cell-board-bottom { 
-  grid-column-start: 5; 
-  grid-column-end: 5; 
-  grid-row-start: 5; 
-  grid-row-end: 5; 
-  background-color:rgba(238, 144, 213, 0.45);
+
+.cell-board-bottom {
+  /* grid-column-start: 5;
+  grid-column-end: 5;
+  grid-row-start: 5;
+  grid-row-end: 5; */
+  background-color: rgba(238, 144, 213, 0.45);
 }
 
-.cell-board-corner{
-background-color: rgba(255, 228, 196, 0.45);
+.cell-board-corner {
+  background-color: rgba(255, 228, 196, 0.45);
 }
-#cell1,#cell23,#cell7,#cell5,#cell11,#cell13,#cell13,#cell17,#cell19{
-  background-color:rgba(144, 238, 144, 0.45);
+
+#cell1, #cell23, #cell7, #cell5, #cell11, #cell13, #cell13, #cell17, #cell19 {
+  background-color: rgba(144, 238, 144, 0.45);
 }
-#cell2,#cell4,#cell20,#cell22,#cell14,#cell16,#cell10,#cell8{
+
+#cell2, #cell4, #cell20, #cell22, #cell14, #cell16, #cell10, #cell8 {
   background-color: rgba(255, 127, 80, 0.45);
 }
-#cell15,#cell21,#cell3,#cell9{
+
+#cell15, #cell21, #cell3, #cell9 {
   background-color: rgba(216, 112, 147, 0.45)
 }
+
 /* @media only screen and (max-width: 600px), screen and (max-height: 700px) {
   #gameFrame {
    position: relative;
     width: 80vw;
     height: 80vh;
   } */
-
