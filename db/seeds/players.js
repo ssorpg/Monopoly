@@ -1,6 +1,6 @@
 exports.seed = function () {
     // return knex('players').del()
-    //     .then(function () {
+    //     .then(() => {
     //         return knex('players').insert([
     //             { id: 1, player_number: 1, name: 'Player 1', money: 1500, position: 18 },
     //             { id: 2, player_number: 2, name: 'Player 2', money: 1500, position: 18 },

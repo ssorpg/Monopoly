@@ -1,6 +1,7 @@
 // MODELS
 const playerModel = require('../../models/player');
 const gameModel = require('../../models/game_state');
+const tileModel = require('../../models/tile');
 
 
 
@@ -11,7 +12,7 @@ function sendToClient(client, response) {
 
 function sendToClients(clients, response, exclude) {
     clients.forEach(client => {
-        if (client === exclude) {
+        if (exclude && client.player === exclude.player) {
             return;
         }
 
@@ -19,11 +20,19 @@ function sendToClients(clients, response, exclude) {
     });
 }
 
+function reNumberWSClients(clients, players) {
+    clients.forEach((client) => { // Don't really like this function but can't think of a better way to work with sets
+        client.player.player_number = players.filter((player) => { return client.player.name === player.name; })[0].player_number;
+    });
+
+    return clients;
+}
+
 
 
 // ROUTES
 module.exports = function (wss) {
-    wss.on('connection', async function (ws) {
+    wss.on('connection', async ws => {
         const game_state = await gameModel.getGameState();
 
         if (game_state.in_progress) {
@@ -33,30 +42,28 @@ module.exports = function (wss) {
         console.log('\nPlayer connected');
         const players = await playerModel.getPlayers();
 
-        const newPlayer = players[0];
+        const newPlayer = players[players.length - 1]; // Last player
 
-        newPlayer.player_number = players.length || 1;
+        newPlayer.player_number = players.length || 1; // In case there are no other players
         ws.player = newPlayer;
 
-        let response = {
-            function: 'setPlayers',
-            payload: players
-        };
-        sendToClient(ws, response);
+        const tiles = await tileModel.getTiles();
 
-        response = {
-            function: 'setPlayer',
-            payload: newPlayer
+        const response = {
+            function: 'onNewPlayer',
+            payload: {
+                players: players,
+                tiles: tiles
+            }
         };
-        sendToClients(wss.clients, response, ws);
+        sendToClients(wss.clients, response);
 
         playerModel.updatePlayer(newPlayer);
 
-        ws.on('message', async function (message) {
-            console.log('\nMessage: ' + message);
+        ws.on('message', async data => {
+            console.log('\nMessage: ' + data);
 
-            const data = JSON.parse(message);
-            // console.log(data);
+            data = JSON.parse(data);
 
             const responseGame = await gameModel[data.function](ws.player);
             sendToClients(wss.clients, responseGame);
@@ -74,12 +81,33 @@ module.exports = function (wss) {
         });
 
         ws.on('close', async () => {
-            const response = await playerModel.deletePlayer(ws.player);
-            let game_state = await gameModel.getGameState();
-            game_state.current_player_turn++;
+            let players = await playerModel.getPlayers();
+            const game_state = await gameModel.getGameState();
 
-            await gameModel.updateCurPlayerTurn(game_state);
+            if (ws.player.player_number === game_state.current_player_turn) { // If it was their turn...
+                if (ws.player.player_number === players.length) {  // And they were in last position...
+                    gameModel.newPlayerTurn(game_state, players); // Player 1 gets to go
+                    await gameModel.updateGameState(game_state);
+                }
+            }
+            else { // If it wasn't their turn...
+                if (ws.player.player_number < game_state.current_player_turn) { // And they go before the person whose turn it is...
+                    game_state.current_player_turn -= 2; // -1 for upCurPlayerTurn++ and -1 for reNumbering players
+                    gameModel.newPlayerTurn(game_state, players);
+                    await gameModel.updateGameState(game_state);
+                }
+            }
 
+            players = await playerModel.deletePlayer(ws.player);
+            wss.clients = reNumberWSClients(wss.clients, players);
+
+            console.log('');
+            console.log(game_state);
+
+            const response = {
+                function: 'setPlayers',
+                payload: players
+            };
             sendToClients(wss.clients, response);
 
             console.log('\nPlayer disconnected');

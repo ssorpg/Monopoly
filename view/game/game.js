@@ -1,7 +1,15 @@
-// HELPER FUNCTIONS
+// FUNCTIONS
 function setPlayer(player) {
     setPlayerInfo(player);
     setPlayerPosition(player);
+}
+
+function setPlayers(payload) {
+    payload.players.forEach(player => {
+        setPlayer(player);
+    });
+
+    setInstructions(payload.playerInstructions);
 }
 
 function setPlayerInfo(player) {
@@ -25,8 +33,37 @@ function setPlayerPosition(player) {
     $('#cell' + player.position).append(playerPos);
 }
 
-function setTileDescription(description) {
-    $('#message').text(description);
+function setInstructions(playerInstructions) {
+    $('#message').text(playerInstructions);
+}
+
+
+function setUpTiles(tiles) {
+    tiles.forEach(tile => {
+        $('#cell' + tile.position)
+            .html(tile.name)
+
+        if (tile.owner !== null) {
+            const cellOwner = $('<p>')
+                .text('Owned by: ' + tile.owner)
+                .addClass('cell' + tile.position + 'Owner');
+
+            $('#cell' + tile.position).append(cellOwner);
+        }
+    });
+}
+
+function setRolls(rolls) {
+    const imgNames = ['1oneDice.png', '2twoDice.png', '3threeDice.png', '4fourDice.png', '5fiveDice.png', '6sixDice.png'];
+    const imgPath = '../images/';
+
+    $('.diceImages').empty();
+    $('.notYourTurn').empty();
+
+    const newImg = $('<img>').attr('src', imgPath + imgNames[rolls.die1 - 1]);
+    const newImg2 = $('<img>').attr('src', imgPath + imgNames[rolls.die2 - 1]);
+
+    $('.diceImages').append(newImg, newImg2);
 }
 
 
@@ -34,60 +71,65 @@ function setTileDescription(description) {
 // WEBSOCKET FUNCTIONS
 const wsFunctions = {
     setPlayer: setPlayer,
+    setPlayers: setPlayers,
+    setRolls: setRolls,
 
-    setPlayers: function (players) {
-        $('#playerInfo').children().empty();
-        $('.positionMarker').remove();
-
-        players.forEach(player => {
-            setPlayer(player);
-        });
+    doTurn: function (payload) {
+        setRolls(payload.rolls);
+        setPlayers(payload);
     },
 
-    setRoll: function (payload) {
-        const player = payload.player
-        const rolls = payload.rolls;
-    
-        const imgNames = ['1oneDice.png', '2twoDice.png', '3threeDice.png', '4fourDice.png', '5fiveDice.png', '6sixDice.png'];
-        const imgPath = '../images/';
-    
-        $('.diceImages').empty();
-    
-        const newImg = $('<img>').attr('src', imgPath + imgNames[rolls.die1 - 1]);
-        const newImg2 = $('<img>').attr('src', imgPath + imgNames[rolls.die2 - 1]);
-    
-        $('.diceImages').append(newImg, newImg2);
-    
-        setPlayer(player);
-        setTileDescription(payload.tile.description);
+    onNewPlayer: function (payload) {
+        setUpTiles(payload.tiles);
+        setPlayers(payload);
     },
 
-    wait: function() {}, // So we don't get console errors when server returns nothing
+    propertyPurchased: function (payload) {
+        const tileOwner = payload.tileOwner;
 
-    checkLosers : function(payload) {   //TODO: get rid of losers in game
+        const tileOwnerDisplay = $('<p>')
+            .text('Owned by: ' + tileOwner.name)
+            .addClass('cell' + tileOwner.position + 'Owner');
+
+        $('#cell' + tileOwner.position).append(tileOwnerDisplay);
+
+        setPlayers(payload);
+    },
+
+    checkLosers: function (payload) { //TODO: get rid of losers in game
         let losers = payload.losers;
         let survivors = payload.survivors;
         // TODO
         // 1. Remove the losers on the player list (done)
-        // 2. If this player is a loser. Show a message like "YOU LOSE"
+        // 2. If this player is a loser. Show a message like 'YOU LOSE'
         // 3. The player is allowed to stay in game to watch it, but it can't send any messages (done)
-        
+
         // Remove all the losers, leave only survivors
         this.setPlayers(survivors);
 
         // Check if this player is a loser
         losers.forEach(loser => {
-            if (loser.name === window.localStorage.getItem("playerName")) {
+            if (loser.name === window.localStorage.getItem('playerName')) {
 
-                // Set this player status as "LOSE". Then this player can't send any messages
+                // Set this player status as 'LOSE'. Then this player can't send any messages
                 // to the server
-                window.localStorage.setItem("playerStatus", "LOSE");
+                window.localStorage.setItem('playerStatus', 'LOSE');
 
-                // TODO: toggle a message to this player saying "YOU LOSE"
+                // TODO: toggle a message to this player saying 'YOU LOSE'
             }
         });
         console.log(losers);
-    }
+    },
+
+    error: function (payload) {
+        $('.error').text(payload.text);
+    },
+
+    messageError: function (payload) {
+        $('.messageError').text(payload.text);
+    },
+
+    wait: function () { }
 };
 
 
@@ -96,35 +138,43 @@ const wsFunctions = {
 function setUpEventListeners(ws) {
     // roll dice
     $('.rollDice').on('click', async () => {
-        if ("PLAYING" === window.localStorage.getItem("playerStatus")) {
+        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
             const request = {
                 function: 'doTurn'
             }
-    
+
             ws.send(JSON.stringify(request));
         }
     });
 
-    // bid 
-    $(".bid").on("click", async () => {
-        // TODO: need to define function "bid" in player.js
-        if ("PLAYING" === window.localStorage.getItem("playerStatus")) {
-            console.log("Will call ws.send('bid')");
+    // pass 
+    $('.pass').on('click', async () => {
+        // TODO: need to define function 'pass' in player.js
+        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+            const request = {
+                function: 'passProperty'
+            }
+
+            ws.send(JSON.stringify(request));
         }
     })
 
     // buy 
-    $(".buy").on("click", async () => {
-        // TODO: need to define function "buy" in player.js
-        if ("PLAYING" === window.localStorage.getItem("playerStatus")) {
-            console.log("Will call ws.send('buy')");
+    $('.buy').on('click', async () => {
+        // TODO: need to define function 'buy' in player.js
+        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+            const request = {
+                function: 'purchaseProperty'
+            }
+
+            ws.send(JSON.stringify(request));
         }
     })
 
     // trade 
-    $(".trade").on("click", async () => {
-        // TODO: need to define function "trade" in player.js
-        if ("PLAYING" === window.localStorage.getItem("playerStatus")) {
+    $('.trade').on('click', async () => {
+        // TODO: need to define function 'trade' in player.js
+        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
             console.log("Will call ws.send('trade')");
         }
     })
@@ -134,7 +184,10 @@ function setUpEventListeners(ws) {
 
 // ON LOAD
 $(document).ready(() => {
-    const ws = new WebSocket('ws://localhost:8080/');
+    const matches = window.location.origin.match(/\/(.*)/);
+    const url = matches[1];
+
+    const ws = new WebSocket('ws://' + url);
 
     console.log(ws);
 

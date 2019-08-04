@@ -1,7 +1,7 @@
 language: node_js
-node_js: "8"
+node_js: '8'
 script:
-  - "npm run lint -- --fix"
+  - 'npm run lint -- --fix'
 services:
   - mysql
 branches:
