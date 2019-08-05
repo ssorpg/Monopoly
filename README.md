@@ -24,8 +24,10 @@ Log in to https://monopoly-project2.herokuapp.com/ to start Monopoly game with y
 
 # Login Page
 Type your name and then click "Start Game" to begin!
-TODO: add the login page screenshot after the update merges
+
+![Login Page](https://github.com/ssorpg/Monopoly/blob/master/login.png)
 
 # Game Board
 Roll the dice, buy the land, act like you are a millionare! :-)
-TODO: add the board page screenshot after the udpate merges
+
+![Game Board](https://github.com/ssorpg/Monopoly/blob/master/board.png)
