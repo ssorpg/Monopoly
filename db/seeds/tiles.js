@@ -4,7 +4,7 @@ exports.seed = function (knex) {
             return knex('tiles').insert([
                 {
                     id: 1, position: 0, type: 'go', money_lost: 0, property_cost: 0,
-                    name: 'GO - Collect $200', description: '', owner: ''
+                    name: 'GO - Collect $100', description: '', owner: ''
                 },
                 {
                     id: 2, position: 1, type: 'property', money_lost: 0, property_cost: 60,
