@@ -17,5 +17,9 @@ module.exports = {
 
     updateTile: async function (tile) {
         await knex('tiles').update(tile).where('position', tile.position);
+    },
+
+    removeTileOwnership: async function (player) {
+        await knex('tiles').update('owner', null).where('owner', player.name);
     }
 }; 

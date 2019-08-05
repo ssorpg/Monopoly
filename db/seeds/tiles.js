@@ -4,7 +4,7 @@ exports.seed = function (knex) {
             return knex('tiles').insert([
                 {
                     id: 1, position: 0, type: 'go', money_lost: 0, property_cost: 0,
-                    name: 'GO', description: '', owner: ''
+                    name: 'GO - Collect $200', description: '', owner: ''
                 },
                 {
                     id: 2, position: 1, type: 'property', money_lost: 0, property_cost: 60,
@@ -28,7 +28,7 @@ exports.seed = function (knex) {
                 },
                 {
                     id: 7, position: 6, type: 'toJail', money_lost: 0, property_cost: 0,
-                    name: 'Lord Blueblood\'s Estate', description: 'Lord Blueblood\'s guards surround you too quickly for you to flee. Go to jail.', owner: ''
+                    name: 'Lord Blueblood\'s Estate', description: '', owner: '' // description: Lord Blueblood\'s guards surround you too quickly for you to flee. Go to jail.
                 },
                 {
                     id: 8, position: 7, type: 'property', money_lost: 0, property_cost: 120,
@@ -76,7 +76,7 @@ exports.seed = function (knex) {
                 },
                 {
                     id: 19, position: 18, type: 'jail', money_lost: 0, property_cost: 0,
-                    name: 'Jail', description: 'Just visiting!', owner: ''
+                    name: 'JAIL', description: 'Just visiting!', owner: ''
                 },
                 {
                     id: 20, position: 19, type: 'property', money_lost: 0, property_cost: 440,

@@ -3,38 +3,42 @@
 <head>
     <title>Monopoly Login</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Fredericka+the+Great&display=swap" rel="stylesheet">
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="login.css" />
 </head>
 
-<body>
+<body onunload="">
     <!-- <div id="refresh">
         <h1>Refresh this page to start a new game.</h1>
         <img id="refreshIcon" src="refresh-icon.png" />
     </div> -->
     <div class="container text-center" id="moneybarwrap">
-            <table>
-                <tr id="moneybarrow0" class="money-bar-row">
-
-                    <td class="moneybararrowcell"><img src="images/arrow-icon.png" id="p0arrow"
-                            class="money-bar-arrow" alt=">" /></td>
-                    <td id="p0moneybar" class="moneybarcell">
-                        <div><h1><span id="p0moneyname">Welcome to Monopoly!</span></h1></div>
-                        <div><h2><span id="p0money">Kickoff fund: $1500</span></h2></div>
-                    </td>
-                </tr>
-            </table>
+        <table>
+            <tr id="moneybarrow0" class="money-bar-row">
+                <td class="moneybararrowcell"><img src="images/arrow-icon.png" id="p0arrow" class="money-bar-arrow"
+                        alt=">" /></td>
+                <td id="p0moneybar" class="moneybarcell">
+                    <div>
+                        <h1><span id="p0moneyname">Welcome to Monopoly!</span></h1>
+                    </div>
+                    <div>
+                        <h2><span id="p0money">Kickoff fund: $1500</span></h2>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <div class="container text-center" id="setup">
         <div class="player-input">
             <img src="images/player1.png" width="50" height="50" id="player" class="player1" alt=player1>
             Put your name here: <input type="text" id="playerName" title="Player name" maxlength="4" value="Player" />
+            <div class="error"></div>
             <div style="margin: 20px 0px;">
-                
+
                 <img src="images/start-icon.png" id="start-icon" class="start-icon" alt=submit>
             </div>
             <button src="images/start-icon.png" id="submitGameButton" title="Begin playing.">Start

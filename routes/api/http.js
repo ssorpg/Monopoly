@@ -52,7 +52,7 @@ module.exports = function (app) {
 
             const newPlayer = {
                 name: newName,
-                money: 1500,
+                money: 400,
                 position: 0,
                 hash: hash
             };

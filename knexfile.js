@@ -36,8 +36,8 @@ const configs = {
         }
     },
     production: {
-        client: 'pg',
-        connection: process.env.DATABASE_URL,
+        client: 'mysql2',
+        connection: process.env.CLEARDB_DATABASE_URL,
         migrations: {
             directory: __dirname + '/db/migrations'
         },

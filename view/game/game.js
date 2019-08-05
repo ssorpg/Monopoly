@@ -4,22 +4,9 @@ function setPlayer(player) {
     setPlayerPosition(player);
 }
 
-function removePlayer(player) {
-    removePlayerInfo(player);
-    removePlayerPosition(player);
-}
-
-function removePlayerInfo(player) {
-    let playerInfo = $('.player' + player.player_number + 'Info');
-
-    playerInfo.empty();
-}
-
-function removePlayerPosition(player) {
-    $('.player' + + player.player_number + 'Pos').remove();
-}
-
 function setPlayers(payload) {
+    $('#playerInfo').children().empty();
+
     payload.players.forEach(player => {
         setPlayer(player);
     });
@@ -30,7 +17,7 @@ function setPlayers(payload) {
 }
 
 function setPlayerInfo(player) {
-    let playerInfo = $('.player' + player.player_number + 'Info');
+    const playerInfo = $('.player' + player.player_number + 'Info');
 
     playerInfo.empty();
 
@@ -62,11 +49,21 @@ function setInstructions(playerInstructions) {
 
 function setUpTiles(tiles) {
     tiles.forEach(tile => {
-        $('#cell' + tile.position)
-            .html(tile.name)
+        if (tile.type === 'property') {
+            $('#cell' + tile.position)
+                .html('<p>' + tile.name + ' ($' + tile.property_cost + ')' + '</p>');
+        }
+        else if (tile.type === 'tax') {
+            $('#cell' + tile.position)
+                .html('<p>' + tile.name + ': </p> <div>$' + tile.money_lost + '</div>');
+        }
+        else {
+            $('#cell' + tile.position)
+                .html('<p>' + tile.name + '</p>');
+        }
 
         if (tile.owner) {
-            const cellOwner = $('<p>')
+            const cellOwner = $('<div>')
                 .text('Owned by: ' + tile.owner)
                 .addClass('cell' + tile.position + 'Owner');
 
@@ -93,7 +90,7 @@ function resetError() {
 }
 
 function setCurrentPlayerTurn(currentPlayerTurn) {
-    $('.currentPlayerTurn').text('Current turn: player ' + currentPlayerTurn);
+    $('.currentPlayerTurn').text('Current turn: Player ' + currentPlayerTurn + '.');
 }
 
 
@@ -126,36 +123,14 @@ const wsFunctions = {
         setPlayers(payload);
     },
 
-    checkLosers: function (payload) { //TODO: get rid of losers in game
-        let losers = payload.losers;
-        let survivors = payload.survivors;
+    lose: function () {
+        alert('You went bankrupt!');
+       sessionstorage.setItem('playerStatus', 'GAMEOVER');
+    },
 
-        // 1. Remove the losers in player info box
-        // 2. Send an alert to everyone showing who loses
-        // 3. The player is allowed to stay in game to watch it, but it can't send any messages 
-
-        // Remove all the losers, leave only survivors
-        losers.forEach(loser => {
-            removePlayer(loser);
-        })
-
-        // Check if this player is a loser
-        let loserMsg = "";
-        losers.forEach(loser => {
-            if (loser.name === sessionStorage.getItem('playerName')) {
-
-                // Set this player status as 'LOSE'. Then this player can't send any messages
-                // to the server
-                sessionStorage.setItem('playerStatus', 'LOSE');
-            }
-
-            // Build a message containing all losers' names
-            loserMsg += (loser.name + " LOSE!!!\n");
-        });
-
-        // Toggle the message of losers to everyone
-        alert(loserMsg);
-        console.log(losers);
+    winner: function (payload) {
+        alert(payload.player.name + ' WINS!');
+        sessionstorage.setItem('playerStatus', 'GAMEOVER');
     },
 
     error: function (payload) {
