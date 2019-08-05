@@ -203,7 +203,16 @@ $(document).ready(() => {
     const matches = window.location.origin.match(/\/(.*)/);
     const url = matches[1];
 
-    const ws = new WebSocket('ws://' + url);
+    let ws;
+
+    console.log(window.location.origin.indexOf('http'));
+
+    if (window.location.origin.indexOf('https') === 0) {
+        ws = new WebSocket('wss://' + url);
+    }
+    else {
+        ws = new WebSocket('ws://' + url);
+    }
 
     console.log(ws);
 
