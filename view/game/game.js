@@ -34,9 +34,14 @@ function setPlayerInfo(player) {
 
     playerInfo.empty();
 
+    let playerNameExpr = player.name;
+    if (player.name === sessionStorage.getItem("playerName")) {
+        playerNameExpr += " (YOU)";
+    }
+
     playerInfo
         .append('<h6><b>Player ' + player.player_number + '</b></h6>')
-        .append('<h6>Name: ' + player.name + '</h6>')
+        .append('<h6>Name: ' + playerNameExpr + '</h6>')
         .append('<h6>Money: $' + player.money + '</h6>');
 }
 
@@ -124,10 +129,10 @@ const wsFunctions = {
     checkLosers: function (payload) { //TODO: get rid of losers in game
         let losers = payload.losers;
         let survivors = payload.survivors;
-        // TODO
-        // 1. Remove the losers on the player list (done)
-        // 2. If this player is a loser. Show a message like 'YOU LOSE'
-        // 3. The player is allowed to stay in game to watch it, but it can't send any messages (done)
+
+        // 1. Remove the losers in player info box
+        // 2. Send an alert to everyone showing who loses
+        // 3. The player is allowed to stay in game to watch it, but it can't send any messages 
 
         // Remove all the losers, leave only survivors
         losers.forEach(loser => {
@@ -135,17 +140,21 @@ const wsFunctions = {
         })
 
         // Check if this player is a loser
+        let loserMsg = "";
         losers.forEach(loser => {
-            if (loser.name === window.localStorage.getItem('playerName')) {
+            if (loser.name === sessionStorage.getItem('playerName')) {
 
                 // Set this player status as 'LOSE'. Then this player can't send any messages
                 // to the server
-                window.localStorage.setItem('playerStatus', 'LOSE');
-
-                // Toggle a message saying the player loses
-                alert(loser.name + " LOSE!!!")
+                sessionStorage.setItem('playerStatus', 'LOSE');
             }
+
+            // Build a message containing all losers' names
+            loserMsg += (loser.name + " LOSE!!!\n");
         });
+
+        // Toggle the message of losers to everyone
+        alert(loserMsg);
         console.log(losers);
     },
 
@@ -166,7 +175,7 @@ const wsFunctions = {
 function setUpEventListeners(ws) {
     // roll dice
     $('.rollDice').on('click', async () => {
-        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
             const request = {
                 function: 'doTurn'
             }
@@ -180,7 +189,7 @@ function setUpEventListeners(ws) {
     // buy 
     $('.buy').on('click', async () => {
         // TODO: need to define function 'buy' in player.js
-        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
             const request = {
                 function: 'purchaseProperty'
             }
@@ -193,7 +202,7 @@ function setUpEventListeners(ws) {
     // pass 
     $('.pass').on('click', async () => {
         // TODO: need to define function 'pass' in player.js
-        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
             const request = {
                 function: 'passProperty'
             }
@@ -206,7 +215,7 @@ function setUpEventListeners(ws) {
     // sell 
     $('.sell').on('click', async () => {
         // TODO: need to define function 'sell' in player.js
-        if ('PLAYING' === window.localStorage.getItem('playerStatus')) {
+        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
             console.log("Will call ws.send('sell')");
         }
     });

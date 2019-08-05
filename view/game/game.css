@@ -138,6 +138,22 @@ body {
   background-color: rgb(255, 166, 77);
 }
 
+.player1Info {
+  color: rgb(77, 166, 255);
+}
+
+.player2Info {
+  color: rgb(255, 77, 106);
+}
+
+.player3Info {
+  color: rgb(77, 255, 77);
+}
+
+.player4Info {
+  color: rgb(255, 166, 77);
+}
+
 /* Square background colors */
 
 .cell-board-corner{
