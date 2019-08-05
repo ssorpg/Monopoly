@@ -187,13 +187,13 @@ function setUpEventListeners(ws) {
         }
     });
 
-    // sell 
-    $('.sell').on('click', async () => {
-        // TODO: need to define function 'sell' in player.js
-        if ('PLAYING' === window.sessionStorage.getItem('playerStatus')) {
-            console.log("Will call ws.send('sell')");
-        }
-    });
+    // sell - NOT IMPLEMENTED
+    // $('.sell').on('click', async () => {
+    //     // TODO: need to define function 'sell' in player.js
+    //     if ('PLAYING' === window.sessionStorage.getItem('playerStatus')) {
+    //         console.log("Will call ws.send('sell')");
+    //     }
+    // });
 }
 
 
