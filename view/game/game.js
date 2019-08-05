@@ -22,7 +22,7 @@ function setPlayerInfo(player) {
     playerInfo.empty();
 
     let playerNameExpr = player.name;
-    if (player.name === sessionStorage.getItem("playerName")) {
+    if (player.name === window.sessionStorage.getItem("playerName")) {
         playerNameExpr += " (YOU)";
     }
 
@@ -125,12 +125,12 @@ const wsFunctions = {
 
     lose: function () {
         alert('You went bankrupt!');
-       sessionstorage.setItem('playerStatus', 'GAMEOVER');
+        window.sessionStorage.setItem('playerStatus', 'GAMEOVER');
     },
 
     winner: function (payload) {
         alert(payload.player.name + ' WINS!');
-        sessionstorage.setItem('playerStatus', 'GAMEOVER');
+        window.sessionStorage.setItem('playerStatus', 'GAMEOVER');
     },
 
     error: function (payload) {
@@ -150,7 +150,7 @@ const wsFunctions = {
 function setUpEventListeners(ws) {
     // roll dice
     $('.rollDice').on('click', async () => {
-        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
+        if ('PLAYING' === window.sessionStorage.getItem('playerStatus')) {
             const request = {
                 function: 'doTurn'
             }
@@ -164,7 +164,7 @@ function setUpEventListeners(ws) {
     // buy 
     $('.buy').on('click', async () => {
         // TODO: need to define function 'buy' in player.js
-        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
+        if ('PLAYING' === window.sessionStorage.getItem('playerStatus')) {
             const request = {
                 function: 'purchaseProperty'
             }
@@ -177,7 +177,7 @@ function setUpEventListeners(ws) {
     // pass 
     $('.pass').on('click', async () => {
         // TODO: need to define function 'pass' in player.js
-        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
+        if ('PLAYING' === window.sessionStorage.getItem('playerStatus')) {
             const request = {
                 function: 'passProperty'
             }
@@ -190,7 +190,7 @@ function setUpEventListeners(ws) {
     // sell 
     $('.sell').on('click', async () => {
         // TODO: need to define function 'sell' in player.js
-        if ('PLAYING' === sessionStorage.getItem('playerStatus')) {
+        if ('PLAYING' === window.sessionStorage.getItem('playerStatus')) {
             console.log("Will call ws.send('sell')");
         }
     });

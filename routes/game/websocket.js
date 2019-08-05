@@ -50,8 +50,16 @@ function reNumberWSClients(clients, players, exclude) {
         }
 
         const [foundPlayer] = players.filter((player) => { return client.player.name === player.name; });
-        client.player.player_number = foundPlayer.player_number;
+
+        if (foundPlayer) {
+            client.player.player_number = foundPlayer.player_number;
+        }
+        else {
+            client.player.lost = true;
+        }
     });
+
+    console.log(clients);
 
     return clients;
 }
@@ -131,17 +139,21 @@ module.exports = function (wss) {
         });
 
         ws.on('close', async () => {
-            const response = await onPlayerLose(wss, ws);
-
-            sendToClients(wss.clients, response);
+            console.log('\nPlayer disconnected');
 
             const players = await playerModel.getPlayers();
 
             if (players.length < 1) {
                 await gameModel.restart();
+                return;
+            }
+            else if (ws.player.lost) {
+                return;
             }
 
-            console.log('\nPlayer disconnected');
+            const response = await onPlayerLose(wss, ws);
+
+            sendToClients(wss.clients, response);
         });
     });
 };
