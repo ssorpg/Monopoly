@@ -26,10 +26,11 @@ body {
 
 /* board cells */
 .cell {
+  display: flex;
+  justify-content: start;
 	top: 0px;
 	left: 0px;
 	padding: 0px;
-	vertical-align: bottom;
 	background-repeat: no-repeat;
 	background-size: auto 40px;
 }
@@ -37,49 +38,63 @@ body {
 .board-center {
 	width: 675px;
 	border: none;
-	vertical-align: bottom;
 	background-repeat: no-repeat;
 	background-size: auto 40px;
 }
 
 .cell-board-corner {
+  vertical-align: top;
+  text-align: center;
 	width: 100px;
-  height: 100px;
+  height: 120px;
   border: solid black 1px;
 }
 
 .cell-board-top {
+  vertical-align: top;
+  text-align: center;
 	width: 100px;
-  height: auto;
+  height: 120px;
   border: dashed black 1px;
 }
 
 .cell-board-bottom {
+  vertical-align: top;
+  text-align: center;
 	width: 100px;
-  height: auto;
+  height: 120px;
   border: dashed black 1px;
 }
 
 .cell-board-left {
+  vertical-align: top;
+  text-align: center;
 	width: auto;
-  height: 100px;
+  height: 120px;
   border: solid black 1px;
 }
 
 .cell-board-right {
+  vertical-align: top;
+  text-align: center;
   width: auto;
-  height: 100px;
+  height: 120px;
   border: solid black 1px;
 }
 
 /* dice */
 #dice {
+  text-align: center;
   position: absolute;
   width: 100px;
   height: 100px;
   left: 16%;
-  bottom: 16%;
+  top: 60%;
   border: solid lightcoral 3px;
+}
+
+.diceImages {
+  margin-top: 15px;
 }
 
 .diceImages > img {
@@ -92,7 +107,7 @@ body {
   position: absolute;
   width: 200px;
   height: 450px;
-  bottom: 16%;
+  top: 18%;
   right: 16%;
   border: dashed lightskyblue 4px;
   background-color: rgba(255, 255, 255, 0.45);
@@ -117,12 +132,14 @@ body {
 .error {
   position: absolute;
   bottom: 0;
+  color: rgb(255, 0, 0);
 }
 
 /* Player colors */
 .positionMarker {
   width: 30px;
   height: 30px;
+  display: inline-block;
 }
 
 .player1Pos {

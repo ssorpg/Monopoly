@@ -57,7 +57,7 @@ async function newPlayerPos(player, rolls) {
     const dieSum = rolls.die1 + rolls.die2;
 
     if (player.position + dieSum >= 24) { // Passed GO
-        player.money += 200;
+        player.money += 100;
     }
 
     player.position = (player.position + dieSum) % 24;
@@ -114,33 +114,19 @@ async function hasTileOwner(player, curTile) {
     player.money -= moneyExchanged;
     tileOwner.money += moneyExchanged;
 
+    console.log(tileOwner);
+
     await playerModel.updatePlayer(player);
     await playerModel.updatePlayer(tileOwner);
 
     return player.name + ' paid $' + moneyExchanged + ' in rent to ' + tileOwner.name + '.';
 }
 
-async function checkLosers() {
-    let losers = await knex('players').select('*').where('money', '<=', 0);
-    let survivors = await knex('players').select('*').where('money', '>', 0);
-
-    return {
-        function: 'checkLosers',
-        payload: {
-            losers: losers,
-            survivors: survivors
-        }
-    };
-}
-
-
-
 // EXPORTS
 module.exports = {
     getGameState: getGameState,
     updateGameState: updateGameState,
     nextPlayerTurn: nextPlayerTurn,
-    checkLosers: checkLosers,
 
     doTurn: async function (player) {
         let game_state = await getGameState();
@@ -166,11 +152,21 @@ module.exports = {
         }
         else {
             player.money -= curTile.money_lost;
+            await playerModel.updatePlayer(player);
             game_state = await nextPlayerTurn(game_state);
         }
-        
+
         game_state = checkGameInProgress(game_state, player);
         updateGameState(game_state);
+
+        if (player.money <= 0) {
+            return {
+                function: 'lose',
+                payload: {
+                    playerInstructions: playerInstructions += ' This caused ' + player.name + ' to go bankrupt!'
+                }
+            };
+        }
 
         return {
             function: 'doTurn',
@@ -193,9 +189,6 @@ module.exports = {
         }
         else if (!game_state.paused) {
             return { function: 'error', payload: { text: 'You haven\'t rolled yet.' } };
-        }
-        else if (curTile.type !== 'property') {
-            return { function: 'error', payload: { text: 'This isn\'t a property.' } };
         }
         else if (curTile.owner) {
             return { function: 'error', payload: { text: 'You can\'t purchase an owned tile.' } };
@@ -232,12 +225,12 @@ module.exports = {
         else if (!game_state.paused) {
             return { function: 'error', payload: { text: 'You haven\'t rolled yet.' } };
         }
-    
+
         game_state = await nextPlayerTurn(game_state);
         game_state.paused = false;
-    
+
         updateGameState(game_state);
-    
+
         return {
             function: 'propertyPassed',
             payload: {
@@ -247,24 +240,32 @@ module.exports = {
         };
     },
 
-    checkTurnOnPlayerLeave: async function (player, players) {
-        let game_state = await getGameState();
-    
+    checkTurnOnPlayerLose: async function (player, players, game_state) {
+        if (!game_state.in_progress && game_state.current_player_turn === 1) { // No need to increment turns if no one's taken any
+            return;
+        }
+
         if (player.player_number === game_state.current_player_turn) { // If it was their turn...
             if (player.player_number === players.length) {  // And they were in last position...
-                game_state = nextPlayerTurn(game_state, players); // Player 1 gets to go
+                game_state = await nextPlayerTurn(game_state, players); // Player 1 gets to go
                 updateGameState(game_state);
             }
         }
         else { // If it wasn't their turn...
             if (player.player_number < game_state.current_player_turn) { // And they go before the person whose turn it is...
                 game_state.current_player_turn -= 2; // -1 for upCurPlayerTurn++ and -1 for reNumbering players
-                game_state = nextPlayerTurn(game_state, players);
+                game_state = await nextPlayerTurn(game_state, players);
                 updateGameState(game_state);
             }
         }
-    
+
         console.log('');
         console.log(game_state);
+    },
+
+    restart: async function () {
+        await knex('players').truncate();
+        await knex('tiles').update({ owner: null });
+        await knex('game_state').update({ current_player_turn: 1, in_progress: false, paused: false });
     }
 };

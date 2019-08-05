@@ -20,9 +20,37 @@ function sendToClients(clients, response, exclude) {
     });
 }
 
-function reNumberWSClients(clients, players) {
+async function onPlayerLose(wss, ws, playerInstructions) {
+    const game_state = await gameModel.getGameState();
+    let players = await playerModel.getPlayers();
+
+    gameModel.checkTurnOnPlayerLose(ws.player, players, game_state);
+
+    players = await playerModel.deletePlayer(ws.player);
+    wss.clients = reNumberWSClients(wss.clients, players, ws);
+
+    await tileModel.removeTileOwnership(ws.player);
+    const tiles = await tileModel.getTiles();
+
+    return {
+        function: 'setBoard',
+        payload: {
+            players: players,
+            tiles: tiles,
+            currentPlayerTurn: game_state.current_player_turn,
+            playerInstructions: playerInstructions || ''
+        }
+    };
+}
+
+function reNumberWSClients(clients, players, exclude) {
     clients.forEach((client) => { // Don't really like this function but can't think of a better way to work with sets
-        client.player.player_number = players.filter((player) => { return client.player.name === player.name; })[0].player_number;
+        if (client.player.name === exclude.player.name) {
+            return;
+        }
+
+        const [foundPlayer] = players.filter((player) => { return client.player.name === player.name; });
+        client.player.player_number = foundPlayer.player_number;
     });
 
     return clients;
@@ -45,6 +73,10 @@ module.exports = function (wss) {
         const newPlayer = players[players.length - 1]; // Last player
 
         newPlayer.player_number = players.length;
+
+        console.log('');
+        console.log(newPlayer);
+
         ws.player = newPlayer;
 
         await playerModel.updatePlayer(newPlayer);
@@ -66,45 +98,48 @@ module.exports = function (wss) {
 
             data = JSON.parse(data);
 
-            const responseGame = await gameModel[data.function](ws.player);
+            ws.player = await playerModel.getPlayer(ws.player);
+            let response = await gameModel[data.function](ws.player);
 
-            if (responseGame.function === 'error') {
-                sendToClient(ws, responseGame);
+            if (response.function === 'error') {
+                sendToClient(ws, response);
+            }
+            else if (response.function === 'lose') {
+                sendToClient(ws, response);
+
+                response = await onPlayerLose(wss, ws, response.payload.playerInstructions);
+
+                sendToClients(wss.clients, response);
+
+                const players = await playerModel.getPlayers();
+
+                if (players.length === 1) {
+                    response = {
+                        function: 'winner',
+                        payload: {
+                            player: players[0]
+                        }
+                    };
+
+                    gameModel.restart();
+                    sendToClients(wss.clients, response);
+                }
             }
             else {
-                sendToClients(wss.clients, responseGame);
-            }
-
-            // see if any one lose
-            const responseLosers = await gameModel.checkLosers();
-            if (0 !== responseLosers.payload.losers.length) {
-                // delete losers in db
-                responseLosers.payload.losers.forEach(async (thisLoser) => {
-                    await playerModel.deletePlayer(thisLoser);
-                });
-                // send back losers' list and survivors' list if someone loses
-                sendToClients(wss.clients, responseLosers);
+                sendToClients(wss.clients, response);
             }
         });
 
         ws.on('close', async () => {
-            let players = await playerModel.getPlayers();
+            const response = await onPlayerLose(wss, ws);
 
-            gameModel.checkTurnOnPlayerLeave(ws.player, players);
-
-            players = await playerModel.deletePlayer(ws.player);
-            wss.clients = reNumberWSClients(wss.clients, players);
-
-            const tiles = await tileModel.getTiles();
-
-            const response = {
-                function: 'setBoard',
-                payload: {
-                    players: players,
-                    tiles: tiles
-                }
-            };
             sendToClients(wss.clients, response);
+
+            const players = await playerModel.getPlayers();
+
+            if (players.length < 1) {
+                await gameModel.restart();
+            }
 
             console.log('\nPlayer disconnected');
         });
