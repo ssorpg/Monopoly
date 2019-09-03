@@ -14,7 +14,7 @@ $(function () {
 
         $('#start-icon').animate({ marginTop: '-=100px' }, 1000, () => {
             // use user api to send player names as players
-            $.post('/api/players', player)
+            $.post('/api/games/1/players', player)
                 .then(res => {
                     // save player's name at session storage
                     window.sessionStorage.setItem('playerName', player.name);

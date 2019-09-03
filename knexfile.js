@@ -9,8 +9,8 @@ const configs = {
         client: 'mysql2',
         connection: {
             host: '127.0.0.1',
-            user: process.env.MYSQL_USER,
-            password: process.env.MYSQL_PASS,
+            user: 'root',
+            password: 'asdfasdf',
             database: 'monopoly_db'
         },
         migrations: {

@@ -1,7 +1,7 @@
 // MODELS
 const playerModel = require('../../models/player');
 const gameModel = require('../../models/game_state');
-
+const gamesModel = require('../../models/games');
 
 
 // FUNCTIONS
@@ -33,8 +33,10 @@ async function checkLogin(name) {
 
 // ROUTES
 module.exports = function (app) {
-    app.post('/api/players', async (req, res) => {
+    app.post('/api/games/:id/players', async (req, res) => {
         try {
+            console.log('/api/players',req.socket.remoteAddress, req.socket.remotePort);
+            console.log(await gamesModel.get(1));
             const newName = req.body.name;
             const cantLogin = await checkLogin(newName);
 

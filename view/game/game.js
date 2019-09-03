@@ -101,16 +101,45 @@ const wsFunctions = {
     setPlayers: setPlayers,
     setRolls: setRolls,
 
+    addNewPlayer: function(payload) {
+        let message = {
+            event:'addPlayer',
+            data: {
+                name: window.sessionStorage.getItem('playerName')
+            }
+        }
+        ws.send(JSON.stringify(message));
+    },
+    canStart: function(payload) {
+        $('#start').show();
+    },
+    started: function(payload) {
+        $('#start').hide();
+        $('#dice').show();
+        $('#diceButton').hide();
+    },
+    yourTurn: function(payload) {
+        $('#diceButton').show();
+    },
     doTurn: function (payload) {
+        $('#diceButton').hide();
         setRolls(payload.rolls);
         setPlayers(payload);
     },
 
+    setupTiles: function(data) {
+        setUpTiles(data.tiles);
+    },
     setBoard: function (payload) {
         setUpTiles(payload.tiles);
         setPlayers(payload);
     },
-
+    setPlayer: function(payload) {
+        setPlayerInfo(payload)
+    },
+    setUuid: function(payload) {
+        uuid = payload.uuid;
+    },
     propertyPurchased: function (payload) {
         const tileOwner = payload.tileOwner;
 
@@ -143,16 +172,21 @@ const wsFunctions = {
         resetError();
     }
 };
+let ws;
+let uuid;
 
 
 
 // EVENT LISTENERS
-function setUpEventListeners(ws) {
+function setUpEventListeners() {
     // roll dice
-    $('.rollDice').on('click', async () => {
+    $('#dice').on('click', async () => {
         if ('PLAYING' === window.sessionStorage.getItem('playerStatus')) {
             const request = {
-                function: 'doTurn'
+                event: 'rollDice',
+                data: {
+                    uuid:uuid
+                }
             }
 
             ws.send(JSON.stringify(request));
@@ -160,13 +194,25 @@ function setUpEventListeners(ws) {
         }
     });
 
+    $('#start').on('click', () => {
+        const request = {
+            event: 'startGame',
+            data: {
+                uuid:uuid
+            }
+        }
+        ws.send(JSON.stringify(request));
+    })
 
-    // buy 
+    // buy
     $('.buy').on('click', async () => {
         // TODO: need to define function 'buy' in player.js
         if ('PLAYING' === window.sessionStorage.getItem('playerStatus')) {
             const request = {
-                function: 'purchaseProperty'
+                event: 'purchaseProperty',
+                data: {
+                    uuid:uuid
+                }
             }
 
             ws.send(JSON.stringify(request));
@@ -174,12 +220,15 @@ function setUpEventListeners(ws) {
         }
     });
 
-    // pass 
+    // pass
     $('.pass').on('click', async () => {
         // TODO: need to define function 'pass' in player.js
         if ('PLAYING' === window.sessionStorage.getItem('playerStatus')) {
             const request = {
-                function: 'passProperty'
+                event: 'passProperty',
+                data: {
+                    uuid:uuid
+                }
             }
 
             ws.send(JSON.stringify(request));
@@ -203,7 +252,6 @@ $(document).ready(() => {
     const matches = window.location.origin.match(/\/(.*)/);
     const url = matches[1];
 
-    let ws;
 
     console.log(window.location.origin.indexOf('http'));
 
@@ -226,5 +274,5 @@ $(document).ready(() => {
         wsFunctions[data.function](data.payload);
     }
 
-    setUpEventListeners(ws);
+    setUpEventListeners();
 });
