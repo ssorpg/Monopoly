@@ -1,6 +1,6 @@
 const tileModel = require('../models/tile');
 
-module.exports.makeBoard = async function() {
+module.exports = async function() {
   let board = Object.create(props);
 
   board.tiles = await get();

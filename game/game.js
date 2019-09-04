@@ -1,9 +1,9 @@
 const util = require('util');
 
-const makeQueue = require('./eventQueue').makeQueue;
-const makePlayer = require('./player').makePlayer;
-const makePlayers = require('./players').makePlayers;
-const makeBoard = require('./board').makeBoard;
+const makeQueue = require('./eventQueue');
+const makePlayers = require('./players');
+const makeBoard = require('./board');
+const stateTable = require('./stateTable');
 
 module.exports.makeGame = async (id, wss) => {
   let game = Object.create(gameProto);
@@ -18,39 +18,11 @@ module.exports.makeGame = async (id, wss) => {
   return game;
 }
 
-const stateTable = {
-  'waitPlayers': {
-    'addPlayer': 'waitPlayers', // stays here until nplayers === 2
-    'delPlayer': 'delPlayer'
-  },
-  'waitStart': {
-    'addPlayer': 'addPlayer', // stays here until start or nplayers ===  4
-    'startGame': 'startGame',
-    'delPlayer': 'delPlayer',
-    'nextPlayer': 'nextPlayer'
-  },
-  "startGame": {
-    "nextPlayer": 'nextPlayer', // enqueue 'nextPlayer'
-    'delPlayer': 'delPlayer'
-  },
-  "nextPlayer": {
-    'delPlayer': 'delPlayer'
-  },
-  "waitRoll": {
-    'rollDice': 'rollDice'
-  },
-  "waitPurchase": {
-    "purchaseProperty": 'purchase',
-    "passProperty": 'pass'
-  }
-}
-
-
 let gameProto = {
   state: undefined,
   players: null,
-  currentPlayer: undefined,
-  currentUuid: undefined,
+  player: undefined,
+  uuid: undefined,
   started: false,
   //
   // game loop, wait for event in queue then go through
@@ -71,41 +43,6 @@ let gameProto = {
       console.log(err)
     }
   },
-  mustBeCurrent(ws) {
-    if(ws.uuid !== this.players.getUuid(this.currentPlayer)) {
-      throw `uuid ${ws.uuid} sent message when not current`;
-    }
-  },
-  sendToClient(message, ws) {
-    ws.send(JSON.stringify(message));
-  },
-  sendToClients(message) {
-    let str = JSON.stringify(message);
-
-    this.wss.clients.forEach((ws) => {
-      ws.send(
-        str
-      )
-    })
-  },
-  async _addPlayer(data, ws) {
-    let player = this.players.add(data, ws);
-
-    this.sendToClient({
-      function: 'setUuid',
-      payload: {
-        uuid: this.players.getUuid(player)
-      }
-    },ws);
-    this.sendToClients({
-      function: 'setBoard',
-      payload: {
-        players: this.players.get(),
-        tiles: this.board.tiles,
-        currentPlayerTurn: 1
-      }
-    });
-  },
   async delPlayer(data, ws) {
     this.players.delete(data.ws);
     //
@@ -115,21 +52,20 @@ let gameProto = {
       this.stateTransition('nextPlayer', data, ws);
     }
   },
-  async waitPlayers(data, ws) {
-    await this._addPlayer(data, ws);
+  waitPlayers(data, ws) {
+    this.players.add(data, ws, this.board.tiles);
 
     if (this.players.length === 2) {
-      this.sendToClients({
+      this.players.send({
         function: 'canStart',
         payload: {
-
         }
-      })
+      });
       this.state = 'waitStart';
     }
   },
-  async addPlayer(data, ws) {
-    await this._addPlayer(data, ws);
+  addPlayer(data, ws) {
+    this.players.add(data, ws, this.board.tiles);
 
     if (this.players.length === 4) {
       this.stateTransition('startGame', data, ws);
@@ -138,62 +74,59 @@ let gameProto = {
   startGame(data, ws) {
     this.started = true;
     this.players.reset();
-    this.sendToClients({
+    this.players.send({
       function: 'started',
-      payload: {
-
-      }
+      payload: {}
     });
     this.stateTransition('nextPlayer', data, ws);
   },
   nextPlayer(data, ws) {
     console.log('\n\u001B[31mlet the good times roll!\u001B[0m\n');
-    this.currentPlayer = this.players.next();
-    this.sendToClient({
+    this.player = this.players.next();
+    this.uuid = this.players.getUuid(this.player);
+    this.players.send({
       function: 'yourTurn',
-      payload: {
-      }
-    }, this.players.getWs(this.currentPlayer));
+      payload: {}
+    }, this.player);
     this.state = 'waitRoll';
   },
-  async rollDice(data, ws) {
+  rollDice(data, ws) {
     this.mustBeCurrent(ws);
 
     let tile;
     let instructions = '';
     let nextPlayer = false;
-    let uuid = this.players.getUuid(this.currentPlayer);
-    let previousPosition = this.currentPlayer.position;
+    let previousPosition = this.player.position;
 
     const rolls = {
       die1: Math.floor((Math.random() * 6) + 1),
       die2: Math.floor((Math.random() * 6) + 1)
     };
-    this.currentPlayer.position += rolls.die1 + rolls.die2;
-    this.currentPlayer.position %= 24;
-    if(this.currentPlayer.position < previousPosition) {
+    this.player.position += rolls.die1 + rolls.die2;
+    this.player.position %= 24;
+    if (this.player.position < previousPosition) {
       instructions = 'Passed Go, collect $100. ';
     }
-    tile = this.board.tiles[this.currentPlayer.position];
+    tile = this.board.tiles[this.player.position];
 
-    if(tile.type === 'property') {
-      if(tile.owner && tile.owner !== uuid) {
-        let rent = tile.property_cost/4;
+    if (tile.type === 'property') {
+      if (tile.owner && tile.owner !== this.uuid) {
+        let rent = tile.property_cost / 4;
 
-        this.currentPlayer.money -= rent;
+        this.player.money -= rent;
         this.players.get(tile.owner).money += rent;
         instructions += `you paid ${rent}`;
         nextPlayer = true;
       } else {
         instructions += 'Purchase ' + tile.name + ' for $' + tile.property_cost + '?';
       }
-    } else if(tile.type === 'tax') {
-      instructions += `${this.currentPlayer.name} paid $${tile.money_lost} in taxes`;
-      this.currentPlayer.money -= tile.money_lost;
+    } else if (tile.type === 'tax') {
+      instructions += `${this.player.name} paid $${tile.money_lost} in taxes`;
+      this.player.money -= tile.money_lost;
       nextPlayer = true;
     }
 
-    this.sendToClients({
+    this.players.send({
       function: 'doTurn',
       payload: {
         players: this.players.get(),
@@ -201,7 +134,7 @@ let gameProto = {
         playerInstructions: instructions
       }
     });
-    if(nextPlayer) {
+    if (nextPlayer) {
       this.nextPlayer();
     } else {
       this.state = 'waitPurchase'
@@ -209,26 +142,39 @@ let gameProto = {
   },
   pass(data, ws) {
     this.mustBeCurrent(ws);
+    tile = this.board.tiles[this.player.position];
+    this.players.send({
+      function: 'propertyPassed',
+      payload: {
+        playerInstructions: this.player.name + ' decided not to purchase ' + tile.name + '.',
+        currentPlayerTurn: this.player.name
+      }
+    });
     this.nextPlayer();
   },
   purchase(data, ws) {
     this.mustBeCurrent(ws);
 
-    tile = this.board.tiles[this.currentPlayer.position];
-    this.currentPlayer.money -= tile.property_cost;
-    tile.owner = this.players.getUuid(this.currentPlayer);
+    tile = this.board.tiles[this.player.position];
+    this.player.money -= tile.property_cost;
+    tile.owner = this.uuid;
 
-    const instructions = this.currentPlayer.name + ' purchased ' + tile.name + ' for $' + tile.property_cost + '.';
+    const instructions = this.player.name + ' purchased ' + tile.name + ' for $' + tile.property_cost + '.';
 
-    this.sendToClients({
-        function: 'propertyPurchased',
-        payload: {
-            players: this.players.get(),
-            tileOwner: this.currentPlayer,
-            playerInstructions: instructions,
-            currentPlayerTurn: this.currentPlayer.name
-        }
+    this.players.send({
+      function: 'propertyPurchased',
+      payload: {
+        players: this.players.get(),
+        tileOwner: this.player,
+        playerInstructions: instructions,
+        currentPlayerTurn: this.player.name
+      }
     });
     this.nextPlayer();
-  }
+  },
+  mustBeCurrent(ws) {
+    if (ws.uuid !== this.uuid) {
+      throw `uuid ${ws.uuid} sent message when not current`;
+    }
+  },
 }

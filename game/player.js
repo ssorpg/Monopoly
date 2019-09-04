@@ -1,4 +1,4 @@
-module.exports.makePlayer = function(player) {
+module.exports = function(player) {
     return Object.assign({}, props, player);
 }
 //

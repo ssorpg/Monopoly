@@ -1,7 +1,7 @@
 //
 // queue factory
 //
-module.exports.makeQueue = function() {
+module.exports = function() {
     return Object.create(queueProto);
 }
 

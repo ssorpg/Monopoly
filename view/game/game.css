@@ -24,6 +24,9 @@ body {
   /* margin-top: 30px; */
 }
 
+#buttons {
+  display:none;
+}
 /* board cells */
 .cell {
   display: flex;

@@ -122,11 +122,11 @@ const wsFunctions = {
         $('#diceButton').show();
     },
     doTurn: function (payload) {
+        $('#buttons').show();
         $('#diceButton').hide();
         setRolls(payload.rolls);
         setPlayers(payload);
     },
-
     setupTiles: function(data) {
         setUpTiles(data.tiles);
     },
@@ -141,6 +141,8 @@ const wsFunctions = {
         uuid = payload.uuid;
     },
     propertyPurchased: function (payload) {
+        $('#buttons').hide();
+
         const tileOwner = payload.tileOwner;
 
         const tileOwnerDisplay = $('<p>')
@@ -167,6 +169,8 @@ const wsFunctions = {
     },
 
     propertyPassed: function (payload) {
+        $('#buttons').hide();
+
         setInstructions(payload.playerInstructions);
         setCurrentPlayerTurn(payload.currentPlayerTurn)
         resetError();
